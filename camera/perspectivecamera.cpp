@@ -21,8 +21,8 @@ Ray PerspectiveCamera::castRay(float x, float y) const {
 
   //Vector3d focus = forwardDirection_ * length(forwardDirection_);
 
-  double focus_x = 2 * (norm_x) * x;
-  double focus_y = 2 * (norm_y) * y;
+  double focus_x = 2 * (norm_x - 0.5) * x;
+  double focus_y = 2 * (norm_y - 0.5) * y;
 
   Vector3d focus = forwardDirection_ + Vector3d(focus_x, focus_y, 0);
 
