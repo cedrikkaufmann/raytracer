@@ -16,15 +16,20 @@ Ray PerspectiveCamera::castRay(float x, float y) const {
   double window_h = tan(fovAngle_/2) * length(forwardDirection_);
   double window_w = window_h;
 
-  double norm_x = x / window_h;
-  double norm_y = y / window_w;
+  double norm_x = x / window_w;
+  double norm_y = y / window_h;
+
+  //Vector3d focus = forwardDirection_ * length(forwardDirection_);
+
+  double focus_x = 2 * (norm_x) * x;
+  double focus_y = 2 * (norm_y) * y;
+
+  Vector3d focus = forwardDirection_ + Vector3d(focus_x, focus_y, 0);
 
   Ray ray;
-  ray.origin = position;
-  Vector3d focus = forwardDirection_ * length(forwardDirection_);
+  ray.origin = Vector3d(x,y,0);
+  normalize(&focus);
+  ray.direction = focus;
 
-  ray.direction = Vector3d(norm_x, norm_y, INFINITY)
-
-
-  return Ray();
+  return ray;
 }
