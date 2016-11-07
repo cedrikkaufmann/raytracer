@@ -28,8 +28,8 @@ Ray PerspectiveCamera::castRay(float x, float y) const {
 
   Ray ray;
   ray.origin = Vector3d(x,y,0);
-  normalize(&focus);
-  ray.direction = focus;
+  //normalize(&focus);
+  ray.direction = normalized(focus);
 
   return ray;
 }
