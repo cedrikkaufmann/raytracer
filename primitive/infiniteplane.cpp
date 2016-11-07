@@ -35,7 +35,36 @@ bool InfinitePlane::intersect(Ray * ray) const {
   * Also return true/false, whether the primitive was hit or not respectively.
   *
   */
-  return false;
+
+  /*
+   * Calculating intersect using normal form of pane equation
+   * Seperation of solving fraction to check denominator against zero
+   *
+   */
+
+  float equation_denominator = dotProduct(ray->direction, normal_);
+  //(ray->direction.x * normal_.x + ray->direction.y * normal_.y + ray->direction.z * normal_.z);
+
+  if (equation_denominator != 0) {
+      float equation_numerator = dotProduct((ray->origin - origin_), normal_) * (-1);
+      //float equation_numerator = ((ray->origin.x - origin_.x) * normal_.x + (ray->origin.y - origin_.y) * normal_.y+(ray->origin.z - origin_.z) * normal_.z) * (-1);
+
+      float fraction_value = equation_numerator / equation_denominator;
+
+      // Calculate point of intersection
+      Vector3d fraction = Vector3d(fraction_value, fraction_value, fraction_value);
+      Vector3d intersection = ray->origin + componentProduct(fraction, ray->direction);
+
+      // Check if shorter than previous
+      if (float distance = length(intersection) < ray->length) {
+          ray->length = distance;
+          ray->primitive = this;
+      }
+
+      return true;
+  } else {
+      return false;
+  }
 }
 
 Vector3d InfinitePlane::normalFromRay(Ray const& ray) const {
