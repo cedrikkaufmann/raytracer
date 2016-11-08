@@ -36,33 +36,23 @@ bool InfinitePlane::intersect(Ray * ray) const {
   *
   */
 
-  /*
-   * Calculating intersect using normal form of pane equation
-   * Seperation of solving fraction to check denominator against zero
-   *
-   */
+  // Calculation of intersection using hesse normal form
+  if (float equation_denominator = dotProduct(ray->direction, normal_) != 0.0) {
+      float normal_distance = dotProduct(ray->direction, normal_);
+      float equation_numerator = normal_distance - dotProduct(ray->origin, normal_);
 
-  float equation_denominator = dotProduct(ray->direction, normal_);
-  //(ray->direction.x * normal_.x + ray->direction.y * normal_.y + ray->direction.z * normal_.z);
-
-  if (equation_denominator != 0) {
-      float equation_numerator = dotProduct((ray->origin - origin_), normal_) * (-1);
-      //float equation_numerator = ((ray->origin.x - origin_.x) * normal_.x + (ray->origin.y - origin_.y) * normal_.y+(ray->origin.z - origin_.z) * normal_.z) * (-1);
-
-      float fraction_value = equation_numerator / equation_denominator;
-
-      // Calculate point of intersection
-      Vector3d fraction = Vector3d(fraction_value, fraction_value, fraction_value);
-      Vector3d intersection = ray->origin + componentProduct(fraction, ray->direction);
-
-      // Check if shorter than previous
-      if (float distance = length(intersection) < ray->length) {
-          ray->length = distance;
+      if (float intersection = equation_numerator / equation_denominator <= 0.0) {
+          // Behind visible area, parallel or in plane
+          return false;
+      } else {
+          // Intersection with plane
+          ray->length = normal_distance;
           ray->primitive = this;
-      }
 
-      return true;
+          return true;
+      }
   } else {
+      // No solution divide by zero
       return false;
   }
 }
