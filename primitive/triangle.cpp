@@ -58,7 +58,7 @@ bool Triangle::intersect(Ray * ray) const {
           // Intersection with plane, check if also with triangle
 
           // Calculate intersection
-          Vector3d intersection_plane = ray->origin + normal_distance * ray->direction;
+          Vector3d intersection_plane = ray->origin + normal_distance * normalized(ray->direction);
           Vector3d edge_a = intersection_plane - base;
 
           // Calculate barycentric coordinates
