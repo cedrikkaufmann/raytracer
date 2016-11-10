@@ -35,37 +35,39 @@ bool Sphere::intersect(Ray * ray) const {
   * Also return true/false, whether the primitive was hit or not respectively.
   *
   */
+
   //calculate parameters for intersection
-  float A = pow(ray->direction.x,2) + pow(ray->direction.y,2) + pow(ray->direction.z,2);
-  float B = 2*((ray->direction.x)*(ray->origin.x) + (ray->direction.y)*(ray->origin.y) + (ray->direction.z)*(ray->origin.z)) ;
-  float C = pow(ray->origin.x,2) + pow(ray->origin.y,2) + pow(ray->origin.z,2) + pow(radius_,2);
-  float discriminant = pow(B,2) - 4*A*C;
-  Vector3d distance_vector(0,0,0);
-  //check whether ray hits the target
-  if(discriminant < 0.0){
+    Vector3d diff = ray->origin - center_;
+    float a = dotProduct(ray->direction, ray->direction);
+    float b = 2 * dotProduct(ray->direction, diff);
+    float c = dotProduct(diff, diff) - radius_ * radius_;
+    float discriminant = pow(b,2) - 4*a*c;
+
+    if (discriminant < 0.0) {//ray doesn't intersect
       return false;
-      //ray doesn't intersect
-  } else {
-      float t1 = (-B + sqrt(discriminant))/(2*A);
-      float t2 = (-B - sqrt(discriminant))/(2*A);
-      //ray is tangent to sphere
-      if(discriminant == 0.0) {
-          //doesn't matter if t1 or t2 is used, they are the same
+    }
+
+    Vector3d distance_vector(0,0,0);
+    float t1 = (-b + sqrt(discriminant))/(2*a);
+    float t2 = (-b - sqrt(discriminant))/(2*a);
+    //ray is tangent to sphere
+    if(discriminant == 0.0) {
+      //doesn't matter if t1 or t2 is used, they are the same
+      distance_vector = ray->direction * t1;
+    } else {
+      //need to find closest point here
+      if(t1 < t2) {
           distance_vector = ray->direction * t1;
       } else {
-          //need to find closest point here
-          if(t1 < t2) {
-              distance_vector = ray->direction * t1;
-          } else {
-              distance_vector = ray->direction * t2;
-          }
+          distance_vector = ray->direction * t2;
       }
-      if (ray->length > length(distance_vector)){
-          ray->length = length(distance_vector);
-          ray->primitive = this;
-      }
-  }
-  return true;
+    }
+    if (ray->length > length(distance_vector)){
+      ray->length = length(distance_vector);
+      ray->primitive = this;
+    }
+
+    return true;
 }
 
 Vector3d Sphere::normalFromRay(Ray const& ray) const {
