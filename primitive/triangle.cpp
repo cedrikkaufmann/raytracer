@@ -45,8 +45,6 @@ bool Triangle::intersect(Ray * ray) const {
   Vector3d normal = crossProduct(edge_b, edge_c);
   normalize(&normal);
 
-  printf("Triangle intersect test");
-
   // Calculation of intersection using hesse normal form
   float equation_denominator = dotProduct(ray->direction, normal);
 
