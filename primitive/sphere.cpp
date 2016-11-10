@@ -60,8 +60,8 @@ bool Sphere::intersect(Ray * ray) const {
               distance_vector = ray->direction * t2;
           }
       }
-      if (ray->length > length(distance_Vector)){
-          ray->length = length(distance_Vector);
+      if (ray->length > length(distance_vector)){
+          ray->length = length(distance_vector);
           ray->primitive = this;
       }
   }
