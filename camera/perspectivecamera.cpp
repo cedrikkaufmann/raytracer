@@ -24,7 +24,7 @@ Ray PerspectiveCamera::castRay(float x, float y) const {
   float focus_x = x * norm_x;
   float focus_y = y * norm_y;
 
-  Vector3d focus = forwardDirection_ + Vector3d(focus_x, focus_y, 0);
+  Vector3d focus = forwardDirection_ + Vector3d(focus_x, focus_y, position_.z);
 
   /* Seems to be done in simplerenderer.cpp
   double focus_x = 2 * (norm_x - 0.5) * x;
@@ -32,7 +32,7 @@ Ray PerspectiveCamera::castRay(float x, float y) const {
   */
 
   Ray ray;
-  ray.origin = Vector3d(x,y,0);
+  ray.origin = Vector3d(x,y,position_.z);
   //normalize(&focus);
   ray.direction = normalized(focus);
 

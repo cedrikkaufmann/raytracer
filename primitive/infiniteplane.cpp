@@ -37,17 +37,23 @@ bool InfinitePlane::intersect(Ray * ray) const {
   */
 
   // Calculation of intersection using hesse normal form
-  if (float equation_denominator = dotProduct(ray->direction, normal_) != 0.0) {
+  float equation_denominator = dotProduct(ray->direction, normal_);
+
+  if (equation_denominator != 0.0) {
       float normal_distance = dotProduct(ray->direction, normal_);
       float equation_numerator = normal_distance - dotProduct(ray->origin, normal_);
 
-      if (float intersection = equation_numerator / equation_denominator <= 0.0) {
+      float intersection = equation_numerator / equation_denominator;
+
+      if (intersection <= 0.0) {
           // Behind visible area, parallel or in plane
           return false;
       } else {
           // Intersection with plane
-          ray->length = normal_distance;
-          ray->primitive = this;
+          if (ray->length > normal_distance) {
+              ray->length = normal_distance;
+              ray->primitive = this;
+          }
 
           return true;
       }

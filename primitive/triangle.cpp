@@ -76,9 +76,11 @@ bool Triangle::intersect(Ray * ray) const {
               return false;
           } else if (barycentric_a + barycentric_b > 1) {
               return false;
-          } else {
-              ray->length = normal_distance;
-              ray->primitive = this;
+          } else {             
+              if (ray->length > normal_distance) {
+                  ray->length = normal_distance;
+                  ray->primitive = this;
+              }
 
               return true;
           }
