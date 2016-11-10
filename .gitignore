@@ -2,6 +2,8 @@
 
 # compiled output
 *.o
+result.ppm
+tracey.pro.user
 
 # IDEs and editors
 /.idea
