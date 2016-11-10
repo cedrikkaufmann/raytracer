@@ -56,14 +56,10 @@ bool Triangle::intersect(Ray * ray) const {
 }
 
 Vector3d Triangle::normalFromRay(Ray const& ray) const {
- /*
-  * IMPLEMENT ME!
-  *
-  * This function should return the surface normal at the point that is
-  * hit by the given ray.
-  *
-  */
-  return Vector3d();
+  Vector3d normal = crossProduct(Vector3d(vertex_[1] - vertex_[0]),Vector3d(vertex_[2] - vertex_[0]));
+  normalize(&normal);
+
+  return normal;
 }
 
 

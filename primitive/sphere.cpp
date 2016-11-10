@@ -51,14 +51,10 @@ bool Sphere::intersect(Ray * ray) const {
 }
 
 Vector3d Sphere::normalFromRay(Ray const& ray) const {
- /*
-  * IMPLEMENT ME!
-  *
-  * This function should return the surface normal at the point that is
-  * hit by the given ray.
-  *
-  */
-  return Vector3d();
+  Vector3d normal = Vector3d(ray.origin + ray.length * ray.direction);
+  normalize(&normal);
+
+  return normal;
 }
 
 
