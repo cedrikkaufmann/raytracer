@@ -35,7 +35,6 @@ bool Triangle::intersect(Ray * ray) const {
   * Also return true/false, whether the primitive was hit or not respectively.
   *
   */
-
   // Span plane defined by vertices of triangle
   // Using a as base vector and edges between a,b and a,c
   Vector3d base = vertex_[0];
@@ -46,12 +45,18 @@ bool Triangle::intersect(Ray * ray) const {
   Vector3d normal = crossProduct(edge_b, edge_c);
   normalize(&normal);
 
+  printf("Triangle intersect test");
+
   // Calculation of intersection using hesse normal form
-  if (float equation_denominator = dotProduct(ray->direction, normal) != 0.0) {
+  float equation_denominator = dotProduct(ray->direction, normal);
+
+  if (equation_denominator != 0.0) {
       float normal_distance = dotProduct(ray->direction, normal);
       float equation_numerator = normal_distance - dotProduct(ray->origin, normal);
 
-      if (float intersection = equation_numerator / equation_denominator <= 0.0) {
+      float intersection = equation_numerator / equation_denominator;
+
+      if (intersection <= 0.0) {
           // Behind visible area, parallel or in plane
           return false;
       } else {
@@ -70,18 +75,18 @@ bool Triangle::intersect(Ray * ray) const {
                   / barycentric_denominator;
 
           // Use Barycentric Coordinates to determine intersection
-          if (barycentric_a < 0 || barycentric_a > 1) {
+          if ((barycentric_a < 0) || (barycentric_a > 1)) {
               return false;
           } else if (barycentric_b < 0) {
               return false;
-          } else if (barycentric_a + barycentric_b > 1) {
+          } else if ((barycentric_a + barycentric_b) > 1) {
               return false;
           } else {             
               if (ray->length > normal_distance) {
                   ray->length = normal_distance;
                   ray->primitive = this;
               }
-
+               printf("Intersection with triangle detected");
               return true;
           }
       }
