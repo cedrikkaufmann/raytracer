@@ -37,7 +37,7 @@ int main() {
   scene.add(new Triangle(Vector3d(30,0,0), Vector3d(1, 2, 1), Vector3d(3, 2.8, -2), redMaterial));
 
   // Add a ground plane
-  //scene.add(new InfinitePlane(Vector3d(0,30,0), Vector3d(0,1,0), redMaterial));
+  scene.add(new InfinitePlane(Vector3d(0,30,0), Vector3d(0,1,0), redMaterial));
 
 
   // Set up the renderer...

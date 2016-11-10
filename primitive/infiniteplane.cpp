@@ -1,4 +1,5 @@
 #include <cmath>
+#include <algorithm>
 #include "primitive/infiniteplane.h"
 
 
@@ -14,51 +15,22 @@ InfinitePlane::InfinitePlane(Vector3d const& origin, Vector3d const& normal, Sha
 // Primitive functions /////////////////////////////////////////////////////////
 
 bool InfinitePlane::intersect(Ray * ray) const {
- /*
-  * IMPLEMENT ME!
-  *
-  * Our raytracer will iterate over all primitives in the scene.
-  * This function tests whether a given ray intersects this primitive.
-  * If the ray intersects this primitive, and if this primitive is closest to
-  * the origin of the ray, then we need to save that information to the ray.
-  *
-  * First, determine whether the ray intersects this object. Next, calculate
-  * the minimum distance from the ray's origin to the primitive's surface.
-  * If this distance is shorter than the ray's length, than this is the
-  * closest primitive to the camera (so far).
-  *
-  * Save that information to the ray by using:
-  *
-  *  ray->length = distance;  // The new (shorter) length of the ray
-  *  ray->primitive = this;   // The primitive that is hit by the ray
-  *
-  * Also return true/false, whether the primitive was hit or not respectively.
-  *
-  */
-
   // Calculation of intersection using hesse normal form
+  Vector3d difference = origin_ - ray->origin;
+
   float equation_denominator = dotProduct(ray->direction, normal_);
 
   if (equation_denominator != 0.0) {
-      float normal_distance = dotProduct(ray->direction, normal_);
-      float equation_numerator = normal_distance - dotProduct(ray->origin, normal_);
+      float distance_normal = dotProduct(difference, normal_) / equation_denominator;
 
-      float intersection = equation_numerator / equation_denominator;
-
-      if (intersection <= 0.0) {
-          // Behind visible area, parallel or in plane
+      if (distance_normal < std::numeric_limits<float_t>::epsilon() || distance_normal > ray->length){
           return false;
-      } else {
-          // Intersection with plane
-          if (ray->length > normal_distance) {
-              ray->length = normal_distance;
-              ray->primitive = this;
-          }
-
-          return true;
       }
+
+      ray->length = distance_normal;
+      ray->primitive = this;
+      return true;
   } else {
-      // No solution divide by zero
       return false;
   }
 }
