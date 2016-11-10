@@ -2,7 +2,7 @@
 
 # compiled output
 *.o
-result.ppm
+result*.ppm
 tracey.pro.user
 
 # IDEs and editors
