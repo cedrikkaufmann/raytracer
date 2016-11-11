@@ -16,7 +16,6 @@ Triangle::Triangle(Vector3d const& a, Vector3d const& b, Vector3d const& c, Shad
 bool Triangle::intersect(Ray * ray) const {
   // Span plane defined by vertices of triangle
   // Using a as base vector and edges between a,b and a,c
-
   Vector3d a = vertex_[0], b = vertex_[1], c = vertex_[2];
 
   Vector3d edge1 = b - a;
@@ -28,18 +27,18 @@ bool Triangle::intersect(Ray * ray) const {
   float inv_det = 1.0f / det;
 
   Vector3d tvec = ray->origin - a;
-  float lambda = dotProduct(tvec, pvec);
-  lambda *= inv_det;
+  float alpha = dotProduct(tvec, pvec);
+  alpha *= inv_det;
 
-  if (lambda < 0.0f || lambda > 1.0f) {
+  if (alpha < 0.0f || alpha > 1.0f) {
     return false;
   }
 
   Vector3d qvec = crossProduct(tvec , edge1);
-  float mue = dotProduct(ray->direction, qvec);
-  mue *= inv_det;
+  float beta = dotProduct(ray->direction, qvec);
+  beta *= inv_det;
 
-  if (mue < 0.0f || mue + lambda > 1.0f) {
+  if (beta < 0.0f || beta + alpha > 1.0f) {
     return false;
   }
 
