@@ -24,13 +24,19 @@ bool Triangle::intersect(Ray * ray) const {
   Vector3d pvec = crossProduct(ray->direction , edge2);
 
   float det = dotProduct(edge1, pvec);
+
+  // check if ray is in plain
+  if (det > -std::numeric_limits<float_t>::epsilon() && det < std::numeric_limits<float_t>::epsilon())
+     return false;
+
   float inv_det = 1.0f / det;
 
+  // distance from ray origin
   Vector3d tvec = ray->origin - a;
   float alpha = dotProduct(tvec, pvec);
   alpha *= inv_det;
 
-  if (alpha < 0.0f || alpha > 1.0f) {
+  if (alpha < std::numeric_limits<float_t>::epsilon() || alpha > 1.0f) {
     return false;
   }
 
@@ -38,7 +44,7 @@ bool Triangle::intersect(Ray * ray) const {
   float beta = dotProduct(ray->direction, qvec);
   beta *= inv_det;
 
-  if (beta < 0.0f || beta + alpha > 1.0f) {
+  if (beta < std::numeric_limits<float_t>::epsilon() || beta + alpha > 1.0f) {
     return false;
   }
 

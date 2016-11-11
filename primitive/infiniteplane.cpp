@@ -20,19 +20,17 @@ bool InfinitePlane::intersect(Ray * ray) const {
 
   float equation_denominator = dotProduct(ray->direction, normal_);
 
-  if (equation_denominator != 0.0) {
-      float distance_normal = dotProduct(difference, normal_) / equation_denominator;
+  if (equation_denominator > -std::numeric_limits<float_t>::epsilon() && equation_denominator < std::numeric_limits<float_t>::epsilon())
+    return false;
 
-      if (distance_normal < std::numeric_limits<float_t>::epsilon() || distance_normal > ray->length){
-          return false;
-      }
+  float distance_normal = dotProduct(difference, normal_) / equation_denominator;
 
-      ray->length = distance_normal;
-      ray->primitive = this;
-      return true;
-  } else {
-      return false;
-  }
+  if (distance_normal < std::numeric_limits<float_t>::epsilon() || distance_normal > ray->length)
+    return false;
+
+  ray->length = distance_normal;
+  ray->primitive = this;
+  return true;
 }
 
 Vector3d InfinitePlane::normalFromRay(Ray const& ray) const {
