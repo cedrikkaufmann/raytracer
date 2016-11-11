@@ -4,6 +4,7 @@
 *.o
 result*.ppm
 tracey.pro.user
+tracey
 
 # IDEs and editors
 /.idea
