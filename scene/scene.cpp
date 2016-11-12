@@ -40,7 +40,7 @@ Color Scene::traceRay(Ray * ray) const {
 
     // ... otherwise look up the environment map ...
     // IMPLEMENT ME!
-	return Color();
+    return Color();
 
   } else {
 

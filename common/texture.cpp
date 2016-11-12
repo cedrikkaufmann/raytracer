@@ -123,16 +123,7 @@ void Texture::setPixelAt(int x, int y, Color const& color) {
 }
 
 Color Texture::color(float u, float v) const {
- /*
-  * IMPLEMENT ME!
-  *
-  * Look up and return the color in the texture from the given u,v coordinates.
-  *
-  * A simple look up should be enough at first.
-  * In the future, we will revise this to use bilinear filtering!
-  *
-  */
-  return Color();
+  return this->pixel(u * this->width(), v * this->height());
 }
 
 Color Texture::color(Vector2d const& surfacePosition) const {

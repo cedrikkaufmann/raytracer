@@ -13,7 +13,6 @@ bool SimpleScene::findOcclusion(Ray * ray) const {
   for (unsigned int i = 0; i < this->primitives_.size(); ++i)
     if (this->primitives_[i]->intersect(ray)
         && !this->primitives_[i]->shader()->isTransparent())
-        return true;
-
+      return true;
   return false;
 }

@@ -2,7 +2,7 @@ CC=g++ -std=c++11
 CFLAGS=-I. -I.. -g 
 EXE=tracey
 
-$(EXE): main.o perspectivecamera.o boundingbox.o color.o texture.o vector2d.o vector3d.o infiniteplane.o sphere.o triangle.o simplerenderer.o scene.o simplescene.o flatshader.o
+$(EXE): main.o perspectivecamera.o boundingbox.o color.o texture.o vector2d.o vector3d.o pointlight.o infiniteplane.o sphere.o triangle.o simplerenderer.o scene.o simplescene.o flatshader.o lambertshader.o mirrorshader.o refractionshader.o simpleshadowshader.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 main.o: main.cpp
