@@ -34,6 +34,10 @@ Color Scene::traceRay(Ray * ray) const {
   if (this->findIntersection(ray) && ray->remainingBounces-- > 0) {
 
     // If the ray has hit an object, call the shader ...
+    for (auto primitive = this->primitives_.begin(); primitive != this->primitives_.end(); primitive++) {
+        printf("Hallo");
+    }
+
     return ray->primitive->shader()->shade(ray);
 
   } else if (!this->environmentMap_.isNull()) {
