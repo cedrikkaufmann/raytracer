@@ -34,17 +34,18 @@ Color Scene::traceRay(Ray * ray) const {
   if (this->findIntersection(ray) && ray->remainingBounces-- > 0) {
 
     // If the ray has hit an object, call the shader ...
-    for (auto primitive = this->primitives_.begin(); primitive != this->primitives_.end(); primitive++) {
-        printf("Hallo");
-    }
-
     return ray->primitive->shader()->shade(ray);
-
   } else if (!this->environmentMap_.isNull()) {
 
     // ... otherwise look up the environment map ...
-    // IMPLEMENT ME!
-    return Color();
+
+    float phi = std::acos(ray->direction.y * -1);
+    float theta = std::atan2(ray->direction.z, ray->direction.x);
+
+    float v = (phi / PI);
+    float u = ((theta + PI) / (2 * PI));
+
+    return environmentMap_.color(u, v);
 
   } else {
 
