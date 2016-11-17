@@ -34,6 +34,7 @@ Color RefractionShader::shade(Ray * ray) const {
   Vector3d t = mue * ray->direction + gamma1 * normalVector;
 
   //bis hier hab ich gemacht
+  ray->direction = t;
 
   // Reset the ray
   ray->length = INFINITY;
