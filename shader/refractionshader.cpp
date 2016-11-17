@@ -24,6 +24,17 @@ Color RefractionShader::shade(Ray * ray) const {
   *
   */
 
+  //hier hab ich angefangen
+
+  //berechne das t
+  double mue = indexOutside / indexInside;
+  double gamma1 = -mue * dotProduct(ray, normalVector) + sqrt((1 - mue*mue)*(1-pow(dotProduct(ray, normalVector),2)));
+  double gamma2 = gamma1 = -mue * dotProduct(ray, normalVector) - sqrt((1 - mue*mue)*(1-pow(dotProduct(ray, normalVector),2)));
+  //welches gamma nehme ich hier?
+  Vector3d t = mue * ray->direction + gamma1 * normalVector;
+
+  //bis hier hab ich gemacht
+
   // Reset the ray
   ray->length = INFINITY;
   ray->primitive = 0;
