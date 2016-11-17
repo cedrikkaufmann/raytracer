@@ -24,7 +24,6 @@ Color RefractionShader::shade(Ray * ray) const {
   *
   */
 
-  //hier hab ich angefangen
 
   //berechne das t
   float mue = indexOutside / indexInside;
@@ -45,7 +44,6 @@ Color RefractionShader::shade(Ray * ray) const {
     t = mue * ray->direction + gamma1 * normalVector;
   }
 
-  //bis hier hab ich gemacht
   ray->direction = t;
 
   // Reset the ray
