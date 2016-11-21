@@ -141,25 +141,48 @@ bool ObjModel::loadObj(char const* fileName,
 
     // Load vertices
     // IMPLEMENT ME!
+    triangleData[0].vertex = vData[vIndices[n].indexA - 1];
+    triangleData[1].vertex = vData[vIndices[n].indexB - 1];
+    triangleData[2].vertex = vData[vIndices[n].indexC - 1];
 
+    /*
+    triangleData[0].vertex = componentProduct(vData[vIndices[n].indexA - 1], scale);
+    triangleData[1].vertex = componentProduct(vData[vIndices[n].indexB - 1], scale);
+    triangleData[2].vertex = componentProduct(vData[vIndices[n].indexC - 1], scale);
+    */
 
     // Load normals (if available)
     // IMPLEMENT ME!
-
+    if (vnIndices.size() != 0) {
+        triangleData[0].normal = vnData[vnIndices[n].indexA - 1];
+        triangleData[1].normal = vnData[vnIndices[n].indexB - 1];
+        triangleData[2].normal = vnData[vnIndices[n].indexC - 1];
+    }
 
     // Load texture coordinates (if available)
     // IMPLEMENT ME!
-
+    if (vnIndices.size() != 0) {
+        triangleData[0].textureCoordinates = vtData[vtIndices[n].indexA - 1];
+        triangleData[1].textureCoordinates = vtData[vtIndices[n].indexB - 1];
+        triangleData[2].textureCoordinates = vtData[vtIndices[n].indexC - 1];
+    }
 
     // Determine minBounds and maxBounds
     // IMPLEMENT ME!
 
-
     // Add the primitives
     // IMPLEMENT ME!
+    Primitive * primitive;
 
+    if (triangleStyle == STANDARD) {
+        primitive = new Triangle(triangleData[0].vertex, triangleData[1].vertex, triangleData[2].vertex, shader());
+    } else {
+        // SmoothTriangle creation here
+    }
 
+    this->primitives.push_back(primitive);
   }
+
   printf("(ObjModel): %lu primitives added\n", this->primitives.size());
   return true;
 }
