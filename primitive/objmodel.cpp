@@ -43,7 +43,12 @@ bool ObjModel::loadObj(char const* fileName,
     // IMPLEMENT ME!
     if (strncmp(line, "v ", 2) == 0) {
         Vector3d vertex;
-        sscanf(line + 3, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
+        int readValues = sscanf(line + 3, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
+
+        if (readValues != 3){
+            return false;
+        }
+
         vData.push_back(vertex);
     }
 
@@ -51,7 +56,12 @@ bool ObjModel::loadObj(char const* fileName,
     // IMPLEMENT ME!
     if (strncmp(line, "vn ", 3) == 0) {
         Vector3d normal;
-        sscanf(line + 4, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
+        int readValues = sscanf(line + 4, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
+
+        if (readValues != 3){
+            return false;
+        }
+
         vnData.push_back(vertex);
     }
 
@@ -59,7 +69,12 @@ bool ObjModel::loadObj(char const* fileName,
     // IMPLEMENT ME!
     if (strncmp(line, "vt ", 3) == 0) {
         Vector2d uv;
-        sscanf(line + 4, "%f %f\n", &uv.u, &uv.v);
+        int readValues = sscanf(line + 4, "%f %f\n", &uv.u, &uv.v);
+
+        if (readValues != 2){
+            return false;
+        }
+
         vtData.push_back(uv);
     }
 
@@ -70,8 +85,13 @@ bool ObjModel::loadObj(char const* fileName,
       // TEXTURENORMALS
       // IMPLEMENT ME!
           case TEXTURENORMALS:
-              sscanf(line + 3, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &v.indexA, &vt.indexA, &vn.indexA,
+              int readValues = sscanf(line + 3, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &v.indexA, &vt.indexA, &vn.indexA,
                      &v.indexB, &vt.indexB, &vn.indexC, &v.indexC, &vt.indexC, &vn.indexC);
+
+              if (readValues != 9){
+                  return false;
+              }
+
               vIndices.push_back(v);
               vnIndices.push_back(vn);
               vtIndices.push_back(vt);
@@ -80,8 +100,13 @@ bool ObjModel::loadObj(char const* fileName,
       // NORMALS
       // IMPLEMENT ME!
           case NORMALS:
-              sscanf(line + 3, "%d//%d %d//%d %d//%d\n", &v.indexA, &vn.indexA,
+              int readValues = sscanf(line + 3, "%d//%d %d//%d %d//%d\n", &v.indexA, &vn.indexA,
                      &v.indexB, &vn.indexC, &v.indexC, &vn.indexC);
+
+              if (readValues != 6){
+                  return false;
+              }
+
               vIndices.push_back(v);
               vnIndices.push_back(vn);
               break;
@@ -89,7 +114,12 @@ bool ObjModel::loadObj(char const* fileName,
       // NONORMALS
       // IMPLEMENT ME!
           case NONORMALS:
-              sscanf(line + 3, "%d %d %d\n", &v.indexA, &v.indexB, &v.indexC);
+              int readValues = sscanf(line + 3, "%d %d %d\n", &v.indexA, &v.indexB, &v.indexC);
+
+              if (readValues != 3){
+                  return false;
+              }
+
               vIndices.push_back(v);
               break;
 
