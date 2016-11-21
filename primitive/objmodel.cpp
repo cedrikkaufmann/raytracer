@@ -141,15 +141,17 @@ bool ObjModel::loadObj(char const* fileName,
 
     // Load vertices
     // IMPLEMENT ME!
+    /*
     triangleData[0].vertex = vData[vIndices[n].indexA - 1];
     triangleData[1].vertex = vData[vIndices[n].indexB - 1];
     triangleData[2].vertex = vData[vIndices[n].indexC - 1];
+    */
 
-    /*
+
     triangleData[0].vertex = componentProduct(vData[vIndices[n].indexA - 1], scale);
     triangleData[1].vertex = componentProduct(vData[vIndices[n].indexB - 1], scale);
     triangleData[2].vertex = componentProduct(vData[vIndices[n].indexC - 1], scale);
-    */
+
 
     // Load normals (if available)
     // IMPLEMENT ME!
