@@ -58,9 +58,9 @@ bool ObjModel::loadObj(char const* fileName,
     // Texture coordinates
     // IMPLEMENT ME!
     if (strncmp(line, "vt ", 3) == 0) {
-        Vector2d vertex;
-        sscanf(line + 4, "%f %f\n", &vertex.u, &vertex.v);
-        vtData.push_back(vertex);
+        Vector2d uv;
+        sscanf(line + 4, "%f %f\n", &uv.u, &uv.v);
+        vtData.push_back(uv);
     }
 
     // Faces (TEXTURENORMALS, NORMALS, NONORMALS)
