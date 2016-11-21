@@ -50,8 +50,8 @@ bool ObjModel::loadObj(char const* fileName,
     // Normals
     // IMPLEMENT ME!
     if (strncmp(line, "vn ", 3) == 0) {
-        Vector3d vertex;
-        sscanf(line + 4, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
+        Vector3d normal;
+        sscanf(line + 4, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
         vnData.push_back(vertex);
     }
 
