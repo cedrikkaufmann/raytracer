@@ -40,7 +40,6 @@ bool ObjModel::loadObj(char const* fileName,
   while (fgets(line, 1000, file) && !feof(file)) {
 
     // Vertices
-    // IMPLEMENT ME!
     if (strncmp(line, "v ", 2) == 0) {
         Vector3d vertex;
         int readValues = sscanf(line + 2, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
@@ -53,7 +52,6 @@ bool ObjModel::loadObj(char const* fileName,
     }
 
     // Normals
-    // IMPLEMENT ME!
     if (strncmp(line, "vn ", 3) == 0) {
         Vector3d normal;
         int readValues = sscanf(line + 3, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
@@ -66,7 +64,6 @@ bool ObjModel::loadObj(char const* fileName,
     }
 
     // Texture coordinates
-    // IMPLEMENT ME!
     if (strncmp(line, "vt ", 3) == 0) {
         Vector2d uv;
         int readValues = sscanf(line + 3, "%f %f\n", &uv.u, &uv.v);
@@ -84,7 +81,6 @@ bool ObjModel::loadObj(char const* fileName,
       int readValues;
       switch (objStyle) {
       // TEXTURENORMALS
-      // IMPLEMENT ME!
           case TEXTURENORMALS:
               readValues = sscanf(line + 2, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &v.indexA, &vt.indexA, &vn.indexA,
                      &v.indexB, &vt.indexB, &vn.indexC, &v.indexC, &vt.indexC, &vn.indexC);
@@ -99,7 +95,6 @@ bool ObjModel::loadObj(char const* fileName,
               break;
 
       // NORMALS
-      // IMPLEMENT ME!
           case NORMALS:
               readValues = sscanf(line + 2, "%d//%d %d//%d %d//%d\n", &v.indexA, &vn.indexA,
                      &v.indexB, &vn.indexC, &v.indexC, &vn.indexC);
@@ -113,7 +108,6 @@ bool ObjModel::loadObj(char const* fileName,
               break;
 
       // NONORMALS
-      // IMPLEMENT ME!
           case NONORMALS:
               readValues = sscanf(line + 2, "%d %d %d\n", &v.indexA, &v.indexB, &v.indexC);
 
@@ -140,33 +134,24 @@ bool ObjModel::loadObj(char const* fileName,
     } triangleData[3];
 
     // Load vertices
-    // IMPLEMENT ME!
-    /*
-    triangleData[0].vertex = vData[vIndices[n].indexA - 1];
-    triangleData[1].vertex = vData[vIndices[n].indexB - 1];
-    triangleData[2].vertex = vData[vIndices[n].indexC - 1];
-    */
-
-
-    triangleData[0].vertex = componentProduct(vData[vIndices[n].indexA - 1], scale);
-    triangleData[1].vertex = componentProduct(vData[vIndices[n].indexB - 1], scale);
-    triangleData[2].vertex = componentProduct(vData[vIndices[n].indexC - 1], scale);
+    triangleData[0].vertex = componentProduct(vData[vIndices[n].indexA - 1], scale) + translation;
+    triangleData[1].vertex = componentProduct(vData[vIndices[n].indexB - 1], scale) + translation;
+    triangleData[2].vertex = componentProduct(vData[vIndices[n].indexC - 1], scale) + translation;
 
 
     // Load normals (if available)
-    // IMPLEMENT ME!
     if (vnIndices.size() != 0) {
-        triangleData[0].normal = vnData[vnIndices[n].indexA - 1];
-        triangleData[1].normal = vnData[vnIndices[n].indexB - 1];
-        triangleData[2].normal = vnData[vnIndices[n].indexC - 1];
+        triangleData[0].normal = componentProduct(vnData[vnIndices[n].indexA - 1], scale) + translation;
+        triangleData[1].normal = componentProduct(vnData[vnIndices[n].indexB - 1], scale) + translation;
+        triangleData[2].normal = componentProduct(vnData[vnIndices[n].indexC - 1], scale) + translation;
+        normalize(&triangleData[0].normal);
     }
 
     // Load texture coordinates (if available)
-    // IMPLEMENT ME!
     if (vnIndices.size() != 0) {
-        triangleData[0].textureCoordinates = vtData[vtIndices[n].indexA - 1];
-        triangleData[1].textureCoordinates = vtData[vtIndices[n].indexB - 1];
-        triangleData[2].textureCoordinates = vtData[vtIndices[n].indexC - 1];
+        triangleData[0].textureCoordinates = componentProduct(vtData[vtIndices[n].indexA - 1], Vector2d(scale.x, scale.y)) + Vector2d(translation.x, translation.y);
+        triangleData[1].textureCoordinates = componentProduct(vtData[vtIndices[n].indexB - 1], Vector2d(scale.x, scale.y)) + Vector2d(translation.x, translation.y);
+        triangleData[2].textureCoordinates = componentProduct(vtData[vtIndices[n].indexC - 1], Vector2d(scale.x, scale.y)) + Vector2d(translation.x, translation.y);
     }
 
     // Determine minBounds and maxBounds
