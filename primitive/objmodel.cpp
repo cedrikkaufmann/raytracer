@@ -41,12 +41,28 @@ bool ObjModel::loadObj(char const* fileName,
 
     // Vertices
     // IMPLEMENT ME!
+    if (strncmp(line, "v ", 2) == 0) {
+        Vector3d vertex = Vector3d();
+        sscanf(line + 3, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
+        vData.push_back(vertex);
+    }
 
     // Normals
     // IMPLEMENT ME!
+    if (strncmp(line, "vn ", 3) == 0) {
+        Vector3d vertex;
+        sscanf(line + 4, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
+        printf("Read vertex normal data: %f, %f, %f\n", vertex.x, vertex.y, vertex.z);
+        vnData.push_back(vertex);
+    }
 
     // Texture coordinates
     // IMPLEMENT ME!
+    if (strncmp(line, "vt ", 3) == 0) {
+        Vector2d vertex;
+        sscanf(line + 4, "%f %f\n", &vertex.u, &vertex.v);
+        vtData.push_back(vertex);
+    }
 
     // Faces (TEXTURENORMALS, NORMALS, NONORMALS)
     if (strncmp(line, "f ", 2) == 0) {
