@@ -42,7 +42,7 @@ bool ObjModel::loadObj(char const* fileName,
     // Vertices
     // IMPLEMENT ME!
     if (strncmp(line, "v ", 2) == 0) {
-        Vector3d vertex = Vector3d();
+        Vector3d vertex;
         sscanf(line + 3, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
         vData.push_back(vertex);
     }
@@ -67,23 +67,25 @@ bool ObjModel::loadObj(char const* fileName,
     if (strncmp(line, "f ", 2) == 0) {
       InputIndexData v, vn, vt;
       switch (objStyle) {
-
       // TEXTURENORMALS
       // IMPLEMENT ME!
           case TEXTURENORMALS:
-
+              sscanf(line + 3, "%d %d %d\n", &vt.indexA, &vt.indexB, &vt.indexC);
+              vtIndices.push_back(vt);
               break;
 
       // NORMALS
       // IMPLEMENT ME!
           case NORMALS:
-
+              sscanf(line + 3, "%d %d %d\n", &vn.indexA, &vn.indexB, &vn.indexC);
+              vnIndices.push_back(vn);
               break;
 
       // NONORMALS
       // IMPLEMENT ME!
           case NONORMALS:
-
+              sscanf(line + 3, "%d %d %d\n", &v.indexA, &v.indexB, &v.indexC);
+              vIndices.push_back(v);
               break;
 
       }
