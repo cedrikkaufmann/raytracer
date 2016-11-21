@@ -52,7 +52,6 @@ bool ObjModel::loadObj(char const* fileName,
     if (strncmp(line, "vn ", 3) == 0) {
         Vector3d vertex;
         sscanf(line + 4, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
-        printf("Read vertex normal data: %f, %f, %f\n", vertex.x, vertex.y, vertex.z);
         vnData.push_back(vertex);
     }
 
