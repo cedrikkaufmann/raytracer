@@ -2,28 +2,23 @@
 #include "primitive/primitive.h"
 #include "scene/scene.h"
 
+MirrorShader::MirrorShader() {}
+
 Color MirrorShader::shade(Ray * ray) const {
-	
- /*
-  * IMPLEMENT ME!
-  *
-  * Get the normal of the primitive, which was hit
-  * Get the reflection vector
-  * Change the ray direction and origin
-  * Reset the ray
-  * Send out a new mirrored ray into the scene
-  * 
-  *
-  */
-  Vector3d normal = ray->primitive->normalFromRay(*ray);
-  Vector3d reflection = ray->direction - 2 * dotProduct(normal, ray->direction) * normal;
+  // Get the normal of the primitive, which was hit
+  Vector3d const normalVector = ray->primitive->normalFromRay(*ray);
 
-  ray->origin = ray->origin + ray->direction * ray->length;
-  ray->direction = reflection;
-  ray->primitive = nullptr;
+  // Get the reflection vector
+  Vector3d const reflectionVector = ray->direction - 2*dotProduct(normalVector,ray->direction)*normalVector;
+
+  // Change the ray direction and origin
+  ray->origin = ray->origin + (ray->length-EPSILON)*ray->direction;
+  ray->direction = normalized(reflectionVector);
+
+  // Reset the ray
   ray->length = INFINITY;
+  ray->primitive = 0;
 
-  parentScene_->traceRay(ray);
-
-  return Color();
+  // Send out a new mirrored ray into the scene
+  return this->parentScene_->traceRay(ray);
 }

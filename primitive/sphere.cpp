@@ -14,54 +14,48 @@ Sphere::Sphere(Vector3d const& center, float radius, Shader * shader)
 // Primitive functions /////////////////////////////////////////////////////////
 
 bool Sphere::intersect(Ray * ray) const {
-  //calculate parameters for intersection
-  Vector3d diff = ray->origin - center_;
-  float a = dotProduct(ray->direction, ray->direction);
-  float b = 2 * dotProduct(ray->direction, diff);
-  float c = dotProduct(diff, diff) - radius_ * radius_;
-  float discriminant = pow(b,2) - 4*a*c;
+  // Use the definitions from the lecture
+  Vector3d const difference = ray->origin - this->center_;
+  float const a = dotProduct(ray->direction, ray->direction);
+  float const b = 2.0f * dotProduct(ray->direction, difference);
+  float const c = dotProduct(difference, difference) - this->radius_*this->radius_;
+  float const discriminant = b*b - 4*a*c;
 
-  if (discriminant < 0.0) {//ray doesn't intersect
+  // Test whether the ray could intersect at all
+  if (discriminant < 0)
     return false;
-  }
+  float const root = std::sqrt(discriminant);
 
-  Vector3d distance_vector(0,0,0);
-  float t1 = (-b + sqrt(discriminant))/(2*a);
-  float t2 = (-b - sqrt(discriminant))/(2*a);
-  //ray is tangent to sphere
-  if(discriminant == 0.0) {
-    //doesn't matter if t1 or t2 is used, they are the same
-    distance_vector = ray->direction * t1;
-  } else {
-    //need to find closest point here
-    if(t1 < t2) {
-        distance_vector = ray->direction * t1;
-    } else {
-        distance_vector = ray->direction * t2;
-    }
-  }
+  // Stable solution
+  float const q = -0.5f*(b < 0 ? (b-root) : (b+root));
+  float const t = c/q;
 
-  if (ray->length < length(distance_vector)){
+  // Test whether this is the foremost primitive in front of the camera
+  if (t < EPSILON || ray->length < t)
     return false;
-  }
 
-  ray->length = length(distance_vector);
+  // Determine the surface position
+  /*
+   * IMPLEMENT ME!
+   */
+
+  // Prepare the ray
+  ray->length = t;
   ray->primitive = this;
+  //ray->surfacePosition = ;
   return true;
 }
 
 Vector3d Sphere::normalFromRay(Ray const& ray) const {
-  Vector3d normal = Vector3d(ray.origin + ray.length * ray.direction);
-  normalize(&normal);
-
-  return normal;
+    Vector3d const target = ray.origin + ray.length*ray.direction;
+    return normalized(target - this->center_);
 }
 
 
 // Bounding box ////////////////////////////////////////////////////////////////
 
 float Sphere::minimumBounds(int dimension) const {
- /*
+  /*
   * IMPLEMENT ME!
   *
   * These values are used for determining the bounding box.
@@ -72,7 +66,7 @@ float Sphere::minimumBounds(int dimension) const {
 }
 
 float Sphere::maximumBounds(int dimension) const {
- /*
+  /*
   * IMPLEMENT ME!
   *
   * These values are used for determining the bounding box.

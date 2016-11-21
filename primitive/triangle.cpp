@@ -14,64 +14,60 @@ Triangle::Triangle(Vector3d const& a, Vector3d const& b, Vector3d const& c, Shad
 // Primitive functions /////////////////////////////////////////////////////////
 
 bool Triangle::intersect(Ray * ray) const {
-  // Span plane defined by vertices of triangle
-  // Using a as base vector and edges between a,b and a,c
-  Vector3d a = vertex_[0], b = vertex_[1], c = vertex_[2];
+  // We use the Möller–Trumbore intersection algorithm
 
-  Vector3d edge1 = b - a;
-  Vector3d edge2 = c - a;
+  // Determine two neighboring edge vectors
+  Vector3d const edge1 = this->vertex_[1] - this->vertex_[0];
+  Vector3d const edge2 = this->vertex_[2] - this->vertex_[0];
 
-  Vector3d pvec = crossProduct(ray->direction , edge2);
+  // Begin calculating determinant
+  Vector3d const pVec = crossProduct(ray->direction, edge2);
 
-  float det = dotProduct(edge1, pvec);
-
-  // check if ray is in plain
-  if (det > -std::numeric_limits<float_t>::epsilon() && det < std::numeric_limits<float_t>::epsilon())
-     return false;
-
-  float inv_det = 1.0f / det;
-
-  // distance from ray origin
-  Vector3d tvec = ray->origin - a;
-  float alpha = dotProduct(tvec, pvec);
-  alpha *= inv_det;
-
-  if (alpha < std::numeric_limits<float_t>::epsilon() || alpha > 1.0f) {
+  // Make sure the ray is not parallel to the triangle
+  float const det = dotProduct(edge1, pVec);
+  if (fabs(det) < EPSILON)
     return false;
-  }
+  float const inv_det = 1.0f / det;
 
-  Vector3d qvec = crossProduct(tvec , edge1);
-  float beta = dotProduct(ray->direction, qvec);
-  beta *= inv_det;
-
-  if (beta < std::numeric_limits<float_t>::epsilon() || beta + alpha > 1.0f) {
+  // Calculate u and test bound
+  Vector3d const tVec = ray->origin - this->vertex_[0];
+  float const u = dotProduct(tVec, pVec)*inv_det;
+  // Test whether the intersection lies outside the triangle
+  if (0.0f > u || u > 1.0f)
     return false;
-  }
 
-  float f = dotProduct(edge2, qvec);
-  f *= inv_det;
-  if (ray->length <= f) {
+  // Calculate v and test bound
+  Vector3d const qVec = crossProduct(tVec, edge1);
+  float const v = dotProduct(ray->direction, qVec)*inv_det;
+  // Test whether the intersection lies outside the triangle
+  if (0.0f > v || u+v > 1.0f)
     return false;
-  }
 
-  ray->length = f;
+  // Test whether this is the foremost primitive in front of the camera
+  float const t = dotProduct(edge2, qVec)*inv_det;
+  if (t < EPSILON || ray->length < t)
+    return false;
+
+  // Prepare the ray
+  ray->length = t;
   ray->primitive = this;
-
+  ray->surfacePosition = Vector2d(u,v);
   return true;
 }
 
 Vector3d Triangle::normalFromRay(Ray const& ray) const {
-  Vector3d normal = crossProduct(Vector3d(vertex_[1] - vertex_[0]),Vector3d(vertex_[2] - vertex_[0]));
-  normalize(&normal);
-
-  return normal;
+    Vector3d const edge1 = this->vertex_[1] - this->vertex_[0];
+     Vector3d const edge2 = this->vertex_[2] - this->vertex_[0];
+     Vector3d const normal = normalized(crossProduct(edge1, edge2));
+     // Make sure the normal works for both sides of the triangle
+     return (dotProduct(normal, ray.direction) < 0 ? normal : -normal);
 }
 
 
 // Bounding box ////////////////////////////////////////////////////////////////
 
 float Triangle::minimumBounds(int dimension) const {
- /*
+  /*
   * IMPLEMENT ME!
   *
   * These values are used for determining the bounding box.
@@ -82,7 +78,7 @@ float Triangle::minimumBounds(int dimension) const {
 }
 
 float Triangle::maximumBounds(int dimension) const {
- /*
+  /*
   * IMPLEMENT ME!
   *
   * These values are used for determining the bounding box.

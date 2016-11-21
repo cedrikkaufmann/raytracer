@@ -10,43 +10,33 @@ Color RefractionShader::shade(Ray * ray) const {
   // Get the normal of the primitive which was hit
   Vector3d normalVector = ray->primitive->normalFromRay(*ray);
 
-  /*
-  * IMPLEMENT ME!
-  *
-  * Calculate the index of refraction
-  * What if we are already inside the object?
-  * Using the notation from the lecture
-  * Calculate t, the new ray direction
-  * Check whether it is a refraction
-  * Otherwise, it is a total reflection
-  * Next we get the reflection vector
-  * Change the ray direction and origin
-  *
-  */
-
-  //hier hab ich angefangen
-
-  //berechne das t
-  float mue = indexOutside / indexInside;
-
-  float discriminant = (1 - mue*mue)*(1-pow(dotProduct(ray->direction, normalVector),2));
-
-  Vector3d t;
-
-  if (discriminant < 0) {
-    // total refelction
-
-    t = Vector3d(0,0,0);
-  } else {
-    float gamma1 = -mue * dotProduct(ray->direction, normalVector) + sqrt(discriminant);
-    float gamma2 = gamma1 = -mue * dotProduct(ray->direction, normalVector) - sqrt(discriminant);
-
-    //welches gamma nehme ich hier?
-    t = mue * ray->direction + gamma1 * normalVector;
+  // Calculate the index of refraction
+  float refractiveIndex = indexInside/indexOutside;
+  // What if we are already inside the object?
+  if (dotProduct(normalVector, ray->direction) > 0) {
+    normalVector = -normalVector;
+    refractiveIndex = indexOutside/indexInside;
   }
 
-  //bis hier hab ich gemacht
-  ray->direction = t;
+  // Using the notation from the lecture
+  float cosineTheta = dotProduct(normalVector, -ray->direction);
+  float cosinePhi = std::sqrt(1 + refractiveIndex * refractiveIndex * (cosineTheta * cosineTheta - 1));
+  // Calculate t, the new ray direction
+  Vector3d t = refractiveIndex * ray->direction + (refractiveIndex * cosineTheta - cosinePhi) * normalVector;
+
+  ray->origin = ray->origin + (ray->length+EPSILON)*ray->direction;
+  // Check whether it is a refraction.
+  if (dotProduct(t, normalVector) <= 0.0){
+    ray->direction = normalized(t);
+  }
+  // Otherwise, it is a total reflection.
+  else {
+    // Next we get the reflection vector
+    Vector3d const reflectionVector = ray->direction - 2*dotProduct(normalVector,ray->direction)*normalVector;
+
+    // Change the ray direction and origin
+    ray->direction = normalized(reflectionVector);
+  }
 
   // Reset the ray
   ray->length = INFINITY;

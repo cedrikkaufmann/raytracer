@@ -1,5 +1,4 @@
 #include <cmath>
-#include <algorithm>
 #include "primitive/infiniteplane.h"
 
 
@@ -15,33 +14,35 @@ InfinitePlane::InfinitePlane(Vector3d const& origin, Vector3d const& normal, Sha
 // Primitive functions /////////////////////////////////////////////////////////
 
 bool InfinitePlane::intersect(Ray * ray) const {
-  // Calculation of intersection using hesse normal form
-  Vector3d difference = origin_ - ray->origin;
-
-  float equation_denominator = dotProduct(ray->direction, normal_);
-
-  if (equation_denominator > -std::numeric_limits<float_t>::epsilon() && equation_denominator < std::numeric_limits<float_t>::epsilon())
+  // Make sure the ray is not parallel to the plane
+  float const cosine = dotProduct(ray->direction, normal_);
+  if (std::fabs(cosine) < EPSILON)
     return false;
 
-  float distance_normal = dotProduct(difference, normal_) / equation_denominator;
+  // Determine the distance at which the ray intersects the plane
+  float const t = dotProduct(origin_ - ray->origin, normal_) / cosine;
 
-  if (distance_normal < std::numeric_limits<float_t>::epsilon() || distance_normal > ray->length)
+  // Test whether this is the foremost primitive in front of the camera
+  if (t < EPSILON || ray->length < t)
     return false;
 
-  ray->length = distance_normal;
+  // Prepare the ray
+  ray->length = t;
   ray->primitive = this;
+  ray->surfacePosition = Vector2d();
   return true;
 }
 
 Vector3d InfinitePlane::normalFromRay(Ray const& ray) const {
-  return normal_;
+    (void)ray; // ray is unused in this case, but we do not want a warning
+     return normal_;
 }
 
 
 // Bounding box ////////////////////////////////////////////////////////////////
 
 float InfinitePlane::minimumBounds(int dimension) const {
- /*
+  /*
   * IMPLEMENT ME!
   *
   * These values are used for determining the bounding box.
@@ -52,7 +53,7 @@ float InfinitePlane::minimumBounds(int dimension) const {
 }
 
 float InfinitePlane::maximumBounds(int dimension) const {
- /*
+  /*
   * IMPLEMENT ME!
   *
   * These values are used for determining the bounding box.
