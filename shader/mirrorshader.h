@@ -7,7 +7,7 @@ class MirrorShader : public Shader {
 
 public:
   // Constructor
-  MirrorShader() {}
+  MirrorShader();
 
   // Shader functions
   virtual Color shade(Ray * ray) const;

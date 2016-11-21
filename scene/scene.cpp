@@ -35,17 +35,13 @@ Color Scene::traceRay(Ray * ray) const {
 
     // If the ray has hit an object, call the shader ...
     return ray->primitive->shader()->shade(ray);
+
   } else if (!this->environmentMap_.isNull()) {
 
     // ... otherwise look up the environment map ...
-
-    float phi = std::acos(ray->direction.y * -1);
-    float theta = std::atan2(ray->direction.z, ray->direction.x);
-
-    float v = (phi / PI);
-    float u = ((theta + PI) / (2 * PI));
-
-    return environmentMap_.color(u, v);
+    float const phi = std::acos(ray->direction.y);
+    float const rho = std::atan2(ray->direction.z, ray->direction.x) + PI;
+    return this->environmentMap_.color(rho/(2*PI), 1.0-phi/PI);
 
   } else {
 
@@ -54,3 +50,4 @@ Color Scene::traceRay(Ray * ray) const {
 
   }
 }
+
