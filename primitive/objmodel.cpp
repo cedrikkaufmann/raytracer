@@ -70,14 +70,19 @@ bool ObjModel::loadObj(char const* fileName,
       // TEXTURENORMALS
       // IMPLEMENT ME!
           case TEXTURENORMALS:
-              sscanf(line + 3, "%d %d %d\n", &vt.indexA, &vt.indexB, &vt.indexC);
+              sscanf(line + 3, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &v.indexA, &vt.indexA, &vn.indexA,
+                     &v.indexB, &vt.indexB, &vn.indexC, &v.indexC, &vt.indexC, &vn.indexC);
+              vIndices.push_back(v);
+              vnIndices.push_back(vn);
               vtIndices.push_back(vt);
               break;
 
       // NORMALS
       // IMPLEMENT ME!
           case NORMALS:
-              sscanf(line + 3, "%d %d %d\n", &vn.indexA, &vn.indexB, &vn.indexC);
+              sscanf(line + 3, "%d//%d %d//%d %d//%d\n", &v.indexA, &vn.indexA,
+                     &v.indexB, &vn.indexC, &v.indexC, &vn.indexC);
+              vIndices.push_back(v);
               vnIndices.push_back(vn);
               break;
 
