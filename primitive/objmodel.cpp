@@ -55,17 +55,26 @@ bool ObjModel::loadObj(char const* fileName,
 
       // TEXTURENORMALS
       // IMPLEMENT ME!
+          case TEXTURENORMALS:
+
+              break;
 
       // NORMALS
       // IMPLEMENT ME!
+          case NORMALS:
+
+              break;
 
       // NONORMALS
       // IMPLEMENT ME!
+          case NONORMALS:
+
+              break;
 
       }
     }
   }
-  printf("(ObjModel): %i faces parsed\n", vIndices.size());
+  printf("(ObjModel): %lu faces parsed\n", vIndices.size());
 
   // For each face, add the corresponding triangle primitive
   for (unsigned int n = 0; n < vIndices.size(); ++n) {
@@ -98,7 +107,7 @@ bool ObjModel::loadObj(char const* fileName,
 
 
   }
-  printf("(ObjModel): %i primitives added\n", this->primitives.size());
+  printf("(ObjModel): %lu primitives added\n", this->primitives.size());
   return true;
 }
 
