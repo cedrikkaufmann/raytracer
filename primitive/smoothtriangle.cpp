@@ -17,5 +17,7 @@ SmoothTriangle::SmoothTriangle(Vector3d const& a, Vector3d const& b, Vector3d co
 Vector3d SmoothTriangle::normalFromRay(Ray const& ray) const {
   // Implement me!
   // Use Triangle::uvFromRay to get the UV coordinates.
-  return Vector3d();
+    Vector3d normal = ray.uBarycentric * normal_[1] + ray.vBarycentric * normal_[2] + (1 - ray.uBarycentric - ray.vBarycentric) * normal_[0];
+    normalize(&normal);
+  return normal;
 }

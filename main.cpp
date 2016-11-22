@@ -86,7 +86,7 @@ int main() {
                      center.z + radius*std::sin((i+1)*(2.0f*PI/tesselation)));
     scene.add(new Triangle(top, a, b, lambertYellow));
     // Once you have implemented the SmoothTriangle, use this line
-    //scene.add(new SmoothTriangle(top, a, b, topNormal, normalized(a-center), normalized(b-center), lambertYellow));
+    scene.add(new SmoothTriangle(top, a, b, topNormal, normalized(a-center), normalized(b-center), lambertYellow));
   }
 
 

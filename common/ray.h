@@ -12,6 +12,8 @@ struct Ray {
   // Components
   Vector3d origin; // o
   Vector3d direction; // d
+  float uBarycentric;
+  float vBarycentric;
   float length; // t
   Primitive const* primitive;
   Vector2d surfacePosition;

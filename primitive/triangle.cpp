@@ -52,6 +52,8 @@ bool Triangle::intersect(Ray * ray) const {
   ray->length = t;
   ray->primitive = this;
   ray->surfacePosition = Vector2d(u,v);
+  ray->uBarycentric = u;
+  ray->vBarycentric = v;
   return true;
 }
 
