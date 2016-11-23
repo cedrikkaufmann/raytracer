@@ -145,20 +145,41 @@ bool ObjModel::loadObj(char const* fileName,
         triangleData[1].normal = componentProduct(vnData[vnIndices[n].indexB - 1], scale) + translation;
         triangleData[2].normal = componentProduct(vnData[vnIndices[n].indexC - 1], scale) + translation;
         normalize(&triangleData[0].normal);
+        normalize(&triangleData[1].normal);
+        normalize(&triangleData[2].normal);
     }
 
     // Load texture coordinates (if available)
-    if (vnIndices.size() != 0) {
+    if (vtIndices.size() != 0) {
         triangleData[0].textureCoordinates = componentProduct(vtData[vtIndices[n].indexA - 1], Vector2d(scale.x, scale.y)) + Vector2d(translation.x, translation.y);
         triangleData[1].textureCoordinates = componentProduct(vtData[vtIndices[n].indexB - 1], Vector2d(scale.x, scale.y)) + Vector2d(translation.x, translation.y);
         triangleData[2].textureCoordinates = componentProduct(vtData[vtIndices[n].indexC - 1], Vector2d(scale.x, scale.y)) + Vector2d(translation.x, translation.y);
     }
 
     // Determine minBounds and maxBounds
-    // IMPLEMENT ME!
+    for (unsigned int i = 0; i < 3; ++i) {
+        if (triangleData[i].vertex.x < minBounds.x) {
+          minBounds.x = triangleData[i].vertex.x;
+        }
+        if (triangleData[i].vertex.y < minBounds.y) {
+          minBounds.y = triangleData[i].vertex.y;
+        }
+        if (triangleData[i].vertex.z < minBounds.z) {
+          minBounds.x = triangleData[i].vertex.z;
+        }
+
+        if (triangleData[i].vertex.x > maxBounds.x) {
+          boundingBoxMax.x = triangleData[i].vertex.x;
+        }
+        if (triangleData[i].vertex.y > maxBounds.y) {
+          boundingBoxMax.y = triangleData[i].vertex.y;
+        }
+        if (triangleData[i].vertex.z > maxBounds.z) {
+          boundingBoxMax.z = triangleData[i].vertex.z;
+        }
+    }
 
     // Add the primitives
-    // IMPLEMENT ME!
     Primitive * primitive;
 
     if (triangleStyle == STANDARD) {
