@@ -12,6 +12,7 @@ struct Ray {
   // Components
   Vector3d origin; // o
   Vector3d direction; // d
+  Vector3d invDirection = Vector3d(1/direction.x, 1/direction.y, 1/direction.z);
   float length; // t
   Primitive const* primitive;
   Vector2d surfacePosition;

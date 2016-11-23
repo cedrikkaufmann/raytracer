@@ -165,7 +165,7 @@ bool ObjModel::loadObj(char const* fileName,
           minBounds.y = triangleData[i].vertex.y;
         }
         if (triangleData[i].vertex.z < minBounds.z) {
-          minBounds.x = triangleData[i].vertex.z;
+          minBounds.z = triangleData[i].vertex.z;
         }
 
         if (triangleData[i].vertex.x > maxBounds.x) {
@@ -199,30 +199,44 @@ bool ObjModel::intersect(Ray * ray) const {
   // Ray box intersection
   bool hit = true;
 
-  Vector3d invDir(1.0f / ray->direction.x, 1.0f / ray->direction.y, 1.0f / ray->direction.z);
+  //Using Smit's algorithm
+  Vector3d invDirection(1 / ray->direction.x, 1 / ray->direction.y, 1 / ray->direction.z);
 
-  float t1 = (minBounds.x - ray->origin.x) * invDir.x;
-  float t2 = (maxBounds.x - ray->origin.x) * invDir.x;
-  float t3 = (minBounds.y - ray->origin.y) * invDir.y;
-  float t4 = (maxBounds.y - ray->origin.y) * invDir.y;
-  float t5 = (minBounds.z - ray->origin.z) * invDir.z;
-  float t6 = (maxBounds.z - ray->origin.z) * invDir.z;
+  Vector3d bounds[2];
+  bounds[0] = minBounds;
+  bounds[1] = maxBounds;
 
-  float tmin = std::max(std::max(std::min(t1, t2), std::min(t3, t4)), std::min(t5, t6));
-  float tmax = std::min(std::min(std::max(t1, t2), std::max(t3, t4)), std::max(t5, t6));
+  int sign[3];
+  sign[0] = (invDirection.x < 0);
+  sign[1] = (invDirection.y < 0);
+  sign[2] = (invDirection.z < 0);
 
-  if (tmax < 0) {
-    hit = false;
-  }
+  float tmin, tmax, tymin, tymax, tzmin, tzmax;
 
-  if (tmin > tmax){
-    hit = false;
-  }
+  tmin = (bounds[sign[0]].x - ray->origin.x) * invDirection.x;
+  tmax = (bounds[1-sign[0]].x - ray->origin.x) * invDirection.x;
+  tymin = (bounds[sign[1]].y - ray->origin.y) * invDirection.y;
+  tymax = (bounds[1-sign[1]].y - ray->origin.y) * invDirection.y;
 
-  if (hit) {
-      for (unsigned int i = 0; i < this->primitives.size(); ++i) {
-        hit |= this->primitives[i]->intersect(ray);
-      }
+  if ( (tmin > tymax) || (tymin > tmax) )
+    return false;
+  if (tymin > tmin)
+    tmin = tymin;
+  if (tymax < tmax)
+    tmax = tymax;
+
+  tzmin = (bounds[sign[2]].z - ray->origin.z) * invDirection.z;
+  tzmax = (bounds[1-sign[2]].z - ray->origin.z) * invDirection.z;
+
+  if ( (tmin > tzmax) || (tzmin > tmax) )
+    return false;
+  if (tzmin > tmin)
+    tmin = tzmin;
+  if (tzmax < tmax)
+    tmax = tzmax;
+
+  for (unsigned int i = 0; i < this->primitives.size(); ++i) {
+    hit |= this->primitives[i]->intersect(ray);
   }
 
   return hit;
