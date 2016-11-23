@@ -197,10 +197,34 @@ bool ObjModel::loadObj(char const* fileName,
 
 bool ObjModel::intersect(Ray * ray) const {
   // Ray box intersection
-  bool hit = false;
-  for (unsigned int i = 0; i < this->primitives.size(); ++i) {
-    hit |= this->primitives[i]->intersect(ray);
+  bool hit = true;
+
+  Vector3d invDir(1.0f / ray->direction.x, 1.0f / ray->direction.y, 1.0f / ray->direction.z);
+
+  float t1 = (minBounds.x - ray->origin.x) * invDir.x;
+  float t2 = (maxBounds.x - ray->origin.x) * invDir.x;
+  float t3 = (minBounds.y - ray->origin.y) * invDir.y;
+  float t4 = (maxBounds.y - ray->origin.y) * invDir.y;
+  float t5 = (minBounds.z - ray->origin.z) * invDir.z;
+  float t6 = (maxBounds.z - ray->origin.z) * invDir.z;
+
+  float tmin = std::max(std::max(std::min(t1, t2), std::min(t3, t4)), std::min(t5, t6));
+  float tmax = std::min(std::min(std::max(t1, t2), std::max(t3, t4)), std::max(t5, t6));
+
+  if (tmax < 0) {
+    hit = false;
   }
+
+  if (tmin > tmax){
+    hit = false;
+  }
+
+  if (hit) {
+      for (unsigned int i = 0; i < this->primitives.size(); ++i) {
+        hit |= this->primitives[i]->intersect(ray);
+      }
+  }
+
   return hit;
 }
 
