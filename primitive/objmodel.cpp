@@ -169,13 +169,13 @@ bool ObjModel::loadObj(char const* fileName,
         }
 
         if (triangleData[i].vertex.x > maxBounds.x) {
-          boundingBoxMax.x = triangleData[i].vertex.x;
+          maxBounds.x = triangleData[i].vertex.x;
         }
         if (triangleData[i].vertex.y > maxBounds.y) {
-          boundingBoxMax.y = triangleData[i].vertex.y;
+          maxBounds.y = triangleData[i].vertex.y;
         }
         if (triangleData[i].vertex.z > maxBounds.z) {
-          boundingBoxMax.z = triangleData[i].vertex.z;
+          maxBounds.z = triangleData[i].vertex.z;
         }
     }
 
