@@ -141,9 +141,9 @@ bool ObjModel::loadObj(char const* fileName,
 
     // Load normals (if available)
     if (vnIndices.size() != 0) {
-        triangleData[0].normal = componentProduct(vnData[vnIndices[n].indexA - 1], scale) + translation;
-        triangleData[1].normal = componentProduct(vnData[vnIndices[n].indexB - 1], scale) + translation;
-        triangleData[2].normal = componentProduct(vnData[vnIndices[n].indexC - 1], scale) + translation;
+        triangleData[0].normal = vnData[vnIndices[n].indexA - 1];
+        triangleData[1].normal = vnData[vnIndices[n].indexB - 1];
+        triangleData[2].normal = vnData[vnIndices[n].indexC - 1];
         normalize(&triangleData[0].normal);
         normalize(&triangleData[1].normal);
         normalize(&triangleData[2].normal);
@@ -151,9 +151,9 @@ bool ObjModel::loadObj(char const* fileName,
 
     // Load texture coordinates (if available)
     if (vtIndices.size() != 0) {
-        triangleData[0].textureCoordinates = componentProduct(vtData[vtIndices[n].indexA - 1], Vector2d(scale.x, scale.y)) + Vector2d(translation.x, translation.y);
-        triangleData[1].textureCoordinates = componentProduct(vtData[vtIndices[n].indexB - 1], Vector2d(scale.x, scale.y)) + Vector2d(translation.x, translation.y);
-        triangleData[2].textureCoordinates = componentProduct(vtData[vtIndices[n].indexC - 1], Vector2d(scale.x, scale.y)) + Vector2d(translation.x, translation.y);
+        triangleData[0].textureCoordinates = vtData[vtIndices[n].indexA - 1];
+        triangleData[1].textureCoordinates = vtData[vtIndices[n].indexB - 1];
+        triangleData[2].textureCoordinates = vtData[vtIndices[n].indexC - 1];
     }
 
     // Determine minBounds and maxBounds
@@ -197,49 +197,19 @@ bool ObjModel::loadObj(char const* fileName,
 
 bool ObjModel::intersect(Ray * ray) const {
   // Ray box intersection
-  bool hit = false;
+  BoundingBox box(minBounds, maxBounds);
 
-  //Using Smit's algorithm
-  Vector3d invDirection(1 / ray->direction.x, 1 / ray->direction.y, 1 / ray->direction.z);
+  if (box.intersects(*ray)) {
+      bool hit = false;
 
-  Vector3d bounds[2];
-  bounds[0] = minBounds;
-  bounds[1] = maxBounds;
+      for (unsigned int i = 0; i < this->primitives.size(); ++i) {
+        hit |= this->primitives[i]->intersect(ray);
+      }
 
-  int sign[3];
-  sign[0] = (invDirection.x < 0);
-  sign[1] = (invDirection.y < 0);
-  sign[2] = (invDirection.z < 0);
-
-  float tmin, tmax, tymin, tymax, tzmin, tzmax;
-
-  tmin = (bounds[sign[0]].x - ray->origin.x) * invDirection.x;
-  tmax = (bounds[1-sign[0]].x - ray->origin.x) * invDirection.x;
-  tymin = (bounds[sign[1]].y - ray->origin.y) * invDirection.y;
-  tymax = (bounds[1-sign[1]].y - ray->origin.y) * invDirection.y;
-
-  if ( (tmin > tymax) || (tymin > tmax) )
-    return false;
-  if (tymin > tmin)
-    tmin = tymin;
-  if (tymax < tmax)
-    tmax = tymax;
-
-  tzmin = (bounds[sign[2]].z - ray->origin.z) * invDirection.z;
-  tzmax = (bounds[1-sign[2]].z - ray->origin.z) * invDirection.z;
-
-  if ( (tmin > tzmax) || (tzmin > tmax) )
-    return false;
-  if (tzmin > tmin)
-    tmin = tzmin;
-  if (tzmax < tmax)
-    tmax = tzmax;
-
-  for (unsigned int i = 0; i < this->primitives.size(); ++i) {
-    hit |= this->primitives[i]->intersect(ray);
+      return hit;
+  } else {
+      return false;
   }
-
-  return hit;
 }
 
 Vector3d ObjModel::normalFromRay(Ray const& ray) const {

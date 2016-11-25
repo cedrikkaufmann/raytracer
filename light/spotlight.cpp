@@ -27,7 +27,7 @@ Light::Illumination SpotLight::illuminate(Ray const& ray) const {
   // Illumination object
   Illumination illum;
   illum.direction = normalized(target - this->position);
-  float alpha = acos(dotProduct(illum.direction, normalized(this->direction)));
+  float alpha = acos(dotProduct(illum.direction, normalized(this->direction))) * 180/PI;
 
   // Precompute the distance from the light source
   float const distance = length(target - this->position);
