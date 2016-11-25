@@ -101,9 +101,8 @@ int main() {
   // Set up the renderer...
   SimpleRenderer renderer;
   // ... and render an image
-  Texture target = renderer.renderImage(scene, camera, 200, 200);
+  Texture target = renderer.renderImage(scene, camera, 800, 800);
   target.save("result.ppm");
 
   return 0;
 }
-

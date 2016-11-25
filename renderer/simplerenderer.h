@@ -2,6 +2,7 @@
 #define SIMPLERENDERER_H
 
 #include "renderer/renderer.h"
+#include "common/ray.h"
 
 class SimpleRenderer : public Renderer {
 
@@ -14,7 +15,6 @@ public:
   virtual Texture renderImage(Scene const& scene,
                               Camera const& camera,
                               int width, int height);
-
 };
 
 #endif

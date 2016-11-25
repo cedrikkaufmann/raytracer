@@ -14,7 +14,7 @@ common/color.h \
 common/ray.h \
 common/texture.h \
 common/vector2d.h \
-common/vector3d.h \
+common/vector3d.h
 
 SOURCES +=\
 common/boundingbox.cpp \
