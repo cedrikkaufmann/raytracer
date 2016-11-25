@@ -57,7 +57,7 @@ int main() {
   // Add some lights
   scene.add(new PointLight(Vector3d(0, 9, 0),50 ,Color(1,0.9,0.5)));
   // Once you have implemented the spotlight, uncomment this section
-  /*
+
   scene.add(new SpotLight(Vector3d(-4, 4, 10),      // Position
                           Vector3d(0.3,-0.3,-0.9),  // Direction
                           15.0f,                    // Minimum alpha
@@ -65,7 +65,7 @@ int main() {
                           450,                      // Intensity
                           Color(1,1,1)              // Color
                           )
-            );*/
+            );
 
   // Once you have implemented the ambientlight, use this line
   //scene.add(new AmbientLight(0.25f));

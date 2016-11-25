@@ -185,7 +185,7 @@ bool ObjModel::loadObj(char const* fileName,
     if (triangleStyle == STANDARD) {
         primitive = new Triangle(triangleData[0].vertex, triangleData[1].vertex, triangleData[2].vertex, shader());
     } else {
-        // SmoothTriangle creation here
+        primitive = new SmoothTriangle(triangleData[0].vertex, triangleData[1].vertex, triangleData[2].vertex, triangleData[0].normal, triangleData[1].normal, triangleData[2].normal, shader());
     }
 
     this->primitives.push_back(primitive);
@@ -197,7 +197,7 @@ bool ObjModel::loadObj(char const* fileName,
 
 bool ObjModel::intersect(Ray * ray) const {
   // Ray box intersection
-  bool hit = true;
+  bool hit = false;
 
   //Using Smit's algorithm
   Vector3d invDirection(1 / ray->direction.x, 1 / ray->direction.y, 1 / ray->direction.z);
