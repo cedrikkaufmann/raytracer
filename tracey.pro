@@ -1,7 +1,8 @@
 CONFIG += console c++11
 
 TEMPLATE = app
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    common/progressbar.cpp
 
 
 
@@ -14,7 +15,8 @@ common/color.h \
 common/ray.h \
 common/texture.h \
 common/vector2d.h \
-common/vector3d.h
+common/vector3d.h \
+    common/progressbar.h
 
 SOURCES +=\
 common/boundingbox.cpp \
