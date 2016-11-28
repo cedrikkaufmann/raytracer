@@ -13,5 +13,6 @@ void ProgressBar::progress(float progress) {
 }
 
 void ProgressBar::end() {
+    progress(1.0f);
     std::cout << std::endl;
 }

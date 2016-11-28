@@ -22,7 +22,7 @@ Texture SimpleRenderer::renderImage(Scene const& scene,
 
       image.setPixelAt(x, y, clamped(scene.traceRay(&ray)));
     }
-;
+
     bar.progress((float)x/image.width());
   }
 

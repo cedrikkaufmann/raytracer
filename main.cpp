@@ -1,108 +1,91 @@
 #include "camera/perspectivecamera.h"
+#include "renderer/desaturationrenderer.h"
+#include "renderer/depthrenderer.h"
 #include "renderer/simplerenderer.h"
+#include "renderer/hazerenderer.h"
 #include "scene/simplescene.h"
 
 #include "light/ambientlight.h"
+#include "light/directionallight.h"
 #include "light/pointlight.h"
-#include "light/spotlight.h"
 
-#include "primitive/infiniteplane.h"
 #include "primitive/objmodel.h"
 #include "primitive/sphere.h"
-#include "primitive/triangle.h"
-#include "primitive/smoothtriangle.h"
 
-#include "shader/flatshader.h"
-#include "shader/simpleshadowshader.h"
-#include "shader/mirrorshader.h"
-#include "shader/refractionshader.h"
 #include "shader/lambertshader.h"
+#include "shader/phongshader.h"
+#include "shader/brdfshader.h"
 
 int main() {
 
+  // Set up the scene
   SimpleScene scene;
   scene.setBackgroundColor(Color(0,0,0));
 
+  // Set up the camera
   PerspectiveCamera camera;
-  camera.setPosition(Vector3d(0,0,10));
-  camera.setForwardDirection(Vector3d(0,0,-1));
+  camera.setPosition(Vector3d(0,5,50));
+  camera.setForwardDirection(normalized(Vector3d(0,-0.5,-1)));
   camera.setUpDirection(Vector3d(0,-1,0));
   camera.setFovAngle(80);
 
-  // Create some materials
+  // Lambert shader
   LambertShader * lambertWhite = new LambertShader(Color(1,1,1));
-  LambertShader * lambertRed = new LambertShader(Color(1,0.6,0.6));
-  LambertShader * lambertBlue = new LambertShader(Color(0.6,0.8,1));
-  LambertShader * lambertGreen = new LambertShader(Color(0.4,0.9,0.4));
-  LambertShader * lambertYellow = new LambertShader(Color(1,0.9,0.1));
-  LambertShader * LambertBrown = new LambertShader(Color(0.8,0.4,0.3));
-
   scene.add(lambertWhite);
-  scene.add(lambertRed);
-  scene.add(lambertBlue);
-  scene.add(lambertGreen);
-  scene.add(lambertYellow);
-  scene.add(LambertBrown);
 
+  // Phong shader
+  // Implement the phong shader and include the following:
+  //PhongShader * phongShader = new PhongShader(0.5, 0.5, 40, Color(0.8,0.3,1));
+  //scene.add(phongShader);
+  //scene.add(new Sphere(Vector3d(+12,0,20),5,phongShader));
 
-  // Lets build a Cornell Box
-  scene.add(new InfinitePlane(Vector3d(0,0,-10),Vector3d(0,0,+1),lambertWhite));
-  scene.add(new InfinitePlane(Vector3d(0,-10,0),Vector3d(0,+1,0),lambertWhite));
-  scene.add(new InfinitePlane(Vector3d(0,+10,0),Vector3d(0,-1,0),lambertWhite));
-  scene.add(new InfinitePlane(Vector3d(-10,0,0),Vector3d(+1,0,0),lambertRed));
-  scene.add(new InfinitePlane(Vector3d(+10,0,0),Vector3d(-1,0,0),lambertBlue));
-
-
+  // BRDF shader
+  // Implement the BRDF shader and include the following:
+  //BrdfShader * goldBrdf = new BrdfShader("gold-paint.binary", Color(5, 5, 5));
+  //BrdfShader * greenBrdf = new BrdfShader("green-acrylic.binary", Color(5, 5, 5));
+  //scene.add(goldBrdf);
+  //scene.add(greenBrdf);
+  //scene.add(new Sphere(Vector3d(0,0,20),5,goldBrdf));
+  //scene.add(new Sphere(Vector3d(-12,0,20),5,greenBrdf));
 
   // Add some lights
-  scene.add(new PointLight(Vector3d(0, 9, 0),50 ,Color(1,0.9,0.5)));
-  // Once you have implemented the spotlight, uncomment this section
-
-  scene.add(new SpotLight(Vector3d(-4, 4, 10),      // Position
-                          Vector3d(0.3,-0.3,-0.9),  // Direction
-                          15.0f,                    // Minimum alpha
-                          30.0f,                    // Maximum alpha
-                          450,                      // Intensity
-                          Color(1,1,1)              // Color
-                          )
-            );
-
-  // Once you have implemented the ambientlight, use this line
-  //scene.add(new AmbientLight(0.25f));
-
-  // Add a cone
-  Vector3d const top(4,2,0);
-  Vector3d const topNormal(0,1,0);
-  float const height = 5;
-  float const radius = 3;
-  int const tesselation = 16;
-  Vector3d const center(top.x, top.y - height, top.z);
-  for (int i = 0; i < tesselation; ++i) {
-    Vector3d const a(center.x + radius*std::cos(i*(2.0f*PI/tesselation)),
-                     center.y,
-                     center.z + radius*std::sin(i*(2.0f*PI/tesselation)));
-    Vector3d const b(center.x + radius*std::cos((i+1)*(2.0f*PI/tesselation)),
-                     center.y,
-                     center.z + radius*std::sin((i+1)*(2.0f*PI/tesselation)));
-    scene.add(new Triangle(top, a, b, lambertYellow));
-    // Once you have implemented the SmoothTriangle, use this line
-    scene.add(new SmoothTriangle(top, a, b, topNormal, normalized(a-center), normalized(b-center), lambertYellow));
-  }
+  scene.add(new PointLight(Vector3d(20,10,30),400));
+  scene.add(new AmbientLight(0.1f));
+  // This is a new type of light source that simulates sunlight:
+  scene.add(new DirectionalLight(normalized(Vector3d(0.5,-0.5,-0.5)),0.5));
 
 
-  // Load the cow model
-  ObjModel * cow = new ObjModel(LambertBrown);
-  cow->loadObj("cow.obj",
-               Vector3d(1,1,1)*60, Vector3d(0,-1,0),
-               ObjModel::NONORMALS, ObjModel::STANDARD);
-  scene.add(cow);
+  // Load the terrain model
+  ObjModel * terrain = new ObjModel(lambertWhite);
+  terrain->loadObj("terrain1.obj",
+                   Vector3d(1,1,1), Vector3d(0,-20,0),
+                   ObjModel::TEXTURENORMALS, ObjModel::SMOOTH);
+  scene.add(terrain);
 
+  // Image size
+  int const imageWidth = 512;
+  int const imageHeight = 512;
 
   // Set up the renderer...
   SimpleRenderer renderer;
   // ... and render an image
-  Texture target = renderer.renderImage(scene, camera, 800, 800);
-  target.save("result.ppm");
+  renderer.renderImage(scene, camera, imageWidth, imageHeight).save("result.ppm");
+
+  // Implement this renderer and include the following:
+  //HazeRenderer hazeRenderer;
+  //hazeRenderer.setHazeColor(Color(0.25,0.75,1.0));
+  //hazeRenderer.setFalloff(0.0075);
+  //hazeRenderer.renderImage(scene, camera, imageWidth, imageHeight).save("result_hazed.ppm");
+
+  // Implement this renderer and include the following:
+  //DesaturationRenderer desaturationRenderer;
+  //desaturationRenderer.setIntensity(0.75);
+  //desaturationRenderer.renderImage(scene, camera, imageWidth, imageHeight).save("result_desaturated.ppm");
+
+  // Implement this renderer and include the following:
+  //DepthRenderer depthRenderer;
+  //depthRenderer.renderImage(scene, camera, imageWidth, imageHeight).save("result_depth.ppm");
 
   return 0;
 }
+
