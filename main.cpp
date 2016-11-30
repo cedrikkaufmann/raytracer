@@ -35,9 +35,9 @@ int main() {
 
   // Phong shader
   // Implement the phong shader and include the following:
-  //PhongShader * phongShader = new PhongShader(0.5, 0.5, 40, Color(0.8,0.3,1));
-  //scene.add(phongShader);
-  //scene.add(new Sphere(Vector3d(+12,0,20),5,phongShader));
+  PhongShader * phongShader = new PhongShader(0.5, 0.5, 40, Color(0.8,0.3,1));
+  scene.add(phongShader);
+  scene.add(new Sphere(Vector3d(+12,0,20),5,phongShader));
 
   // BRDF shader
   // Implement the BRDF shader and include the following:
