@@ -21,12 +21,10 @@ common/vector3d.h \
 SOURCES +=\
 common/boundingbox.cpp \
 common/color.cpp\
-common/progressbar.cpp \n
+common/progressbar.cpp \
 common/texture.cpp \
 common/vector2d.cpp \
 common/vector3d.cpp \
-
-
 
 ###  CAMERA  ###################################################################
 
