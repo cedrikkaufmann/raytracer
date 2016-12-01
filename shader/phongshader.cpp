@@ -18,7 +18,7 @@ Color PhongShader::shade(Ray * ray) const {
     }
 
     /* calculate reflection vector */
-    Vector3d reflect = ray->direction - 2 * dotProduct(normal, ray->direction) * normal;
+    Vector3d reflect = - ray->direction + 2 * dotProduct(normal, ray->direction) * normal;
 
     Color result = objectColor;
 
