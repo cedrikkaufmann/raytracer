@@ -57,7 +57,7 @@ int main() {
 
   // Load the terrain model
   ObjModel * terrain = new ObjModel(lambertWhite);
-  terrain->loadObj("terrain1.obj",
+  terrain->loadObj("E:/Jana/Uni/CG1/computergrafik-raytracing/terrain1.obj",
                    Vector3d(1,1,1), Vector3d(0,-20,0),
                    ObjModel::TEXTURENORMALS, ObjModel::SMOOTH);
   scene.add(terrain);
