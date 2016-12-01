@@ -2,6 +2,7 @@
 #include "scene/scene.h"
 #include "camera/camera.h"
 #include "common/progressbar.h"
+#include "common/hsvcolor.h"
 
 #include <time.h>
 
@@ -21,10 +22,14 @@ Texture DesaturationRenderer::renderImage(Scene const& scene,
                                (static_cast<float>(y)/height*2-1)*aspectRatio);
 
       Color c = clamped(scene.traceRay(&ray));
-      int average = (c.r + c.g + c.b) / 3;
-      Color gray(average, average, average);
 
-      image.setPixelAt(x, y, gray);
+      HSVColor hsv(c.r, c.g, c.b);
+      hsv.s = hsv.s * intensity();
+      image.setPixelAt(x, y, hsv.getRGBColor());
+
+      //float average = (c.r + c.g + c.b) / 3;
+      //Color gray(average, average, average);
+      //image.setPixelAt(x, y, c * gray * intensity());
     }
 
     bar.progress((float)x/image.width());

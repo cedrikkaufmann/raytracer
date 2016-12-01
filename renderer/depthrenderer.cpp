@@ -27,6 +27,8 @@ Texture DepthRenderer::renderImage(Scene const& scene,
           min = (min > ray.length ? ray.length : min);
           max = (max < ray.length ? ray.length : min);
       }
+
+      bar.progress((float)x/(image.width() * 2));
     }
 
     float dist = max - min;
@@ -45,7 +47,7 @@ Texture DepthRenderer::renderImage(Scene const& scene,
       image.setPixelAt(x, y, gray);
     }
 
-    bar.progress((float)x/image.width());
+    bar.progress((float)x/(image.width() * 2) + 0.5f);
   }
 
   bar.end();
