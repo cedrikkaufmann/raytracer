@@ -41,82 +41,54 @@ bool ObjModel::loadObj(char const* fileName,
 
     // Vertices
     if (strncmp(line, "v ", 2) == 0) {
-        Vector3d vertex;
-        int readValues = sscanf(line + 2, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
-
-        if (readValues != 3){
-            return false;
-        }
-
-        vData.push_back(vertex);
+      float a, b, c;
+      sscanf(line, "v %f %f %f", &a, &b, &c);
+      vData.push_back(Vector3d(a,b,c));
     }
 
     // Normals
     if (strncmp(line, "vn ", 3) == 0) {
-        Vector3d normal;
-        int readValues = sscanf(line + 3, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
-
-        if (readValues != 3){
-            return false;
-        }
-
-        vnData.push_back(normal);
+      float a, b, c;
+      sscanf(line, "vn %f %f %f", &a, &b, &c);
+      vnData.push_back(normalized(Vector3d(a,b,c)));
     }
 
     // Texture coordinates
-    if (strncmp(line, "vt ", 3) == 0) {
-        Vector2d uv;
-        int readValues = sscanf(line + 3, "%f %f\n", &uv.u, &uv.v);
-
-        if (readValues != 2){
-            return false;
-        }
-
-        vtData.push_back(uv);
+    if (strncmp(line, "vt ", 2) == 0) {
+      float u, v;
+      sscanf(line, "vt %f %f", &u, &v);
+      vtData.push_back(Vector2d(u,v));
     }
 
-    // Faces (TEXTURENORMALS, NORMALS, NONORMALS)
+    // Faces
     if (strncmp(line, "f ", 2) == 0) {
       InputIndexData v, vn, vt;
-      int readValues;
       switch (objStyle) {
-      // TEXTURENORMALS
-          case TEXTURENORMALS:
-              readValues = sscanf(line + 2, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &v.indexA, &vt.indexA, &vn.indexA,
-                     &v.indexB, &vt.indexB, &vn.indexC, &v.indexC, &vt.indexC, &vn.indexC);
 
-              if (readValues != 9){
-                  return false;
-              }
+      case TEXTURENORMALS:
+        sscanf(line, "f %d/%d/%d %d/%d/%d %d/%d/%d",
+               &v.indexA, &vn.indexA, &vt.indexA,
+               &v.indexB, &vn.indexB, &vt.indexB,
+               &v.indexC, &vn.indexC, &vt.indexC);
+        vIndices.push_back({v.indexA-1, v.indexB-1, v.indexC-1});
+        vnIndices.push_back({vn.indexA-1, vn.indexB-1, vn.indexC-1});
+        vtIndices.push_back({vt.indexA-1, vt.indexB-1, vt.indexC-1});
+        break;
 
-              vIndices.push_back(v);
-              vnIndices.push_back(vn);
-              vtIndices.push_back(vt);
-              break;
+      case NORMALS:
+        sscanf(line, "f %d/%d %d/%d %d/%d",
+               &v.indexA, &vn.indexA,
+               &v.indexB, &vn.indexB,
+               &v.indexC, &vn.indexC);
+        vIndices.push_back({v.indexA-1, v.indexB-1, v.indexC-1});
+        vnIndices.push_back({vn.indexA-1, vn.indexB-1, vn.indexC-1});
+        break;
 
-      // NORMALS
-          case NORMALS:
-              readValues = sscanf(line + 2, "%d//%d %d//%d %d//%d\n", &v.indexA, &vn.indexA,
-                     &v.indexB, &vn.indexC, &v.indexC, &vn.indexC);
-
-              if (readValues != 6){
-                  return false;
-              }
-
-              vIndices.push_back(v);
-              vnIndices.push_back(vn);
-              break;
-
-      // NONORMALS
-          case NONORMALS:
-              readValues = sscanf(line + 2, "%d %d %d\n", &v.indexA, &v.indexB, &v.indexC);
-
-              if (readValues != 3){
-                  return false;
-              }
-
-              vIndices.push_back(v);
-              break;
+      case NONORMALS:
+        sscanf(line, "f %d %d %d",
+               &v.indexA, &v.indexB, &v.indexC);
+        vIndices.push_back({v.indexA-1, v.indexB-1, v.indexC-1});
+        break;
 
       }
     }
@@ -134,82 +106,64 @@ bool ObjModel::loadObj(char const* fileName,
     } triangleData[3];
 
     // Load vertices
-    triangleData[0].vertex = componentProduct(vData[vIndices[n].indexA - 1], scale) + translation;
-    triangleData[1].vertex = componentProduct(vData[vIndices[n].indexB - 1], scale) + translation;
-    triangleData[2].vertex = componentProduct(vData[vIndices[n].indexC - 1], scale) + translation;
-
+    triangleData[0].vertex = componentProduct(vData[vIndices[n].indexA], scale) + translation;
+    triangleData[1].vertex = componentProduct(vData[vIndices[n].indexB], scale) + translation;
+    triangleData[2].vertex = componentProduct(vData[vIndices[n].indexC], scale) + translation;
 
     // Load normals (if available)
-    if (vnIndices.size() != 0) {
-        triangleData[0].normal = vnData[vnIndices[n].indexA - 1];
-        triangleData[1].normal = vnData[vnIndices[n].indexB - 1];
-        triangleData[2].normal = vnData[vnIndices[n].indexC - 1];
-        normalize(&triangleData[0].normal);
-        normalize(&triangleData[1].normal);
-        normalize(&triangleData[2].normal);
+    if ((objStyle == NORMALS) || (objStyle == TEXTURENORMALS)) {
+      triangleData[0].normal = vnData[vnIndices[n].indexA];
+      triangleData[1].normal = vnData[vnIndices[n].indexB];
+      triangleData[2].normal = vnData[vnIndices[n].indexC];
     }
 
     // Load texture coordinates (if available)
-    if (vtIndices.size() != 0) {
-        triangleData[0].textureCoordinates = vtData[vtIndices[n].indexA - 1];
-        triangleData[1].textureCoordinates = vtData[vtIndices[n].indexB - 1];
-        triangleData[2].textureCoordinates = vtData[vtIndices[n].indexC - 1];
+    if (objStyle == TEXTURENORMALS) {
+      triangleData[0].textureCoordinates = vtData[vtIndices[n].indexA];
+      triangleData[1].textureCoordinates = vtData[vtIndices[n].indexB];
+      triangleData[2].textureCoordinates = vtData[vtIndices[n].indexC];
     }
 
     // Determine minBounds and maxBounds
-    for (unsigned int i = 0; i < 3; ++i) {
-        if (triangleData[i].vertex.x < minBounds.x) {
-          minBounds.x = triangleData[i].vertex.x;
-        }
-        if (triangleData[i].vertex.y < minBounds.y) {
-          minBounds.y = triangleData[i].vertex.y;
-        }
-        if (triangleData[i].vertex.z < minBounds.z) {
-          minBounds.z = triangleData[i].vertex.z;
-        }
-
-        if (triangleData[i].vertex.x > maxBounds.x) {
-          maxBounds.x = triangleData[i].vertex.x;
-        }
-        if (triangleData[i].vertex.y > maxBounds.y) {
-          maxBounds.y = triangleData[i].vertex.y;
-        }
-        if (triangleData[i].vertex.z > maxBounds.z) {
-          maxBounds.z = triangleData[i].vertex.z;
-        }
+    for (unsigned int k = 0; k < 3; ++k) {
+      this->minBounds.x = std::min(this->minBounds.x, triangleData[k].vertex.x);
+      this->minBounds.y = std::min(this->minBounds.y, triangleData[k].vertex.y);
+      this->minBounds.z = std::min(this->minBounds.z, triangleData[k].vertex.z);
+      this->maxBounds.x = std::min(this->maxBounds.x, triangleData[k].vertex.x);
+      this->maxBounds.y = std::min(this->maxBounds.y, triangleData[k].vertex.y);
+      this->maxBounds.z = std::min(this->maxBounds.z, triangleData[k].vertex.z);
     }
 
     // Add the primitives
-    Primitive * primitive;
-
-    if (triangleStyle == STANDARD) {
-        primitive = new Triangle(triangleData[0].vertex, triangleData[1].vertex, triangleData[2].vertex, shader());
-    } else {
-        primitive = new SmoothTriangle(triangleData[0].vertex, triangleData[1].vertex, triangleData[2].vertex, triangleData[0].normal, triangleData[1].normal, triangleData[2].normal, shader());
+    switch (triangleStyle) {
+    case STANDARD:
+      this->primitives.push_back(new Triangle(triangleData[0].vertex, triangleData[1].vertex, triangleData[2].vertex, this->shader()));
+      break;
+    case SMOOTH:
+      this->primitives.push_back(new SmoothTriangle(triangleData[0].vertex, triangleData[1].vertex, triangleData[2].vertex,
+          triangleData[0].normal, triangleData[1].normal, triangleData[2].normal, this->shader()));
+      break;
     }
 
-    this->primitives.push_back(primitive);
   }
-
   printf("(ObjModel): %lu primitives added\n", this->primitives.size());
   return true;
 }
 
 bool ObjModel::intersect(Ray * ray) const {
   // Ray box intersection
-  BoundingBox box(minBounds, maxBounds);
+  bool hit = false;
+
+  BoundingBox box(this->minBounds, this->maxBounds);
 
   if (box.intersects(*ray)) {
-      bool hit = false;
-
       for (unsigned int i = 0; i < this->primitives.size(); ++i) {
         hit |= this->primitives[i]->intersect(ray);
       }
-
       return hit;
-  } else {
-      return false;
   }
+
+  return hit;
 }
 
 Vector3d ObjModel::normalFromRay(Ray const& ray) const {
@@ -220,23 +174,9 @@ Vector3d ObjModel::normalFromRay(Ray const& ray) const {
 }
 
 float ObjModel::minimumBounds(int dimension) const {
-  /*
-    * IMPLEMENT ME!
-    *
-    * These values are used for determining the bounding box.
-    * This should return the minimum value along the given dimension.
-    *
-    */
-  return -INFINITY;
+  return this->minBounds[dimension];
 }
 
 float ObjModel::maximumBounds(int dimension) const {
-  /*
-    * IMPLEMENT ME!
-    *
-    * These values are used for determining the bounding box.
-    * This should return the minimum value along the given dimension.
-    *
-    */
-  return +INFINITY;
+  return this->maxBounds[dimension];
 }

@@ -30,7 +30,7 @@ Color PhongShader::shade(Ray * ray) const {
     for (unsigned int l=0; l< this->parentScene_->lights().size(); l++)
     {
         /* get directionection to light, and intensity */
-        this->parentScene_->lights()[l]->illuminate(shadow);
+        //this->parentScene_->lights()[l]->illuminate(shadow);
         /* diffuse term */
         float cosLightNormal = dotProduct(shadow.direction, normal);
 

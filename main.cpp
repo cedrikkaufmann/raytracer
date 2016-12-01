@@ -72,19 +72,19 @@ int main() {
   renderer.renderImage(scene, camera, imageWidth, imageHeight).save("result.ppm");
 
   // Implement this renderer and include the following:
-  //HazeRenderer hazeRenderer;
-  //hazeRenderer.setHazeColor(Color(0.25,0.75,1.0));
-  //hazeRenderer.setFalloff(0.0075);
-  //hazeRenderer.renderImage(scene, camera, imageWidth, imageHeight).save("result_hazed.ppm");
+  HazeRenderer hazeRenderer;
+  hazeRenderer.setHazeColor(Color(0.25,0.75,1.0));
+  hazeRenderer.setFalloff(0.0075);
+  hazeRenderer.renderImage(scene, camera, imageWidth, imageHeight).save("result_hazed.ppm");
 
   // Implement this renderer and include the following:
-  //DesaturationRenderer desaturationRenderer;
-  //desaturationRenderer.setIntensity(0.75);
-  //desaturationRenderer.renderImage(scene, camera, imageWidth, imageHeight).save("result_desaturated.ppm");
+  DesaturationRenderer desaturationRenderer;
+  desaturationRenderer.setIntensity(0.75);
+  desaturationRenderer.renderImage(scene, camera, imageWidth, imageHeight).save("result_desaturated.ppm");
 
   // Implement this renderer and include the following:
-  //DepthRenderer depthRenderer;
-  //depthRenderer.renderImage(scene, camera, imageWidth, imageHeight).save("result_depth.ppm");
+  DepthRenderer depthRenderer;
+  depthRenderer.renderImage(scene, camera, imageWidth, imageHeight).save("result_depth.ppm");
 
   return 0;
 }
