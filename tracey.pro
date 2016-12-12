@@ -1,8 +1,7 @@
 CONFIG += console c++11
 
 TEMPLATE = app
-SOURCES += main.cpp \
-    common/advancedcolor.cpp
+SOURCES += main.cpp
 
 
 
@@ -13,30 +12,30 @@ common/common.h \
 common/boundingbox.h \
 common/brdfread.h \
 common/color.h \
-common/progressbar.h \
 common/ray.h \
 common/texture.h \
 common/vector2d.h \
 common/vector3d.h \
-    common/advancedcolor.h
 
 SOURCES +=\
 common/boundingbox.cpp \
 common/color.cpp\
-common/progressbar.cpp \
 common/texture.cpp \
 common/vector2d.cpp \
 common/vector3d.cpp \
+
+
 
 ###  CAMERA  ###################################################################
 
 HEADERS +=\
 camera/camera.h \
 camera/perspectivecamera.h \
+camera/omnidirectionalcamera.h \
 
 SOURCES += \
 camera/perspectivecamera.cpp \
-
+camera/omnidirectionalcamera.cpp \
 
 
 ###  LIGHT  ####################################################################
@@ -65,6 +64,7 @@ primitive/objmodel.h \
 primitive/sphere.h \
 primitive/smoothtriangle.h \
 primitive/triangle.h \
+primitive/texturedtriangle.h \
 
 SOURCES +=\
 primitive/infiniteplane.cpp \
@@ -72,12 +72,14 @@ primitive/objmodel.cpp \
 primitive/sphere.cpp \
 primitive/smoothtriangle.cpp \
 primitive/triangle.cpp \
+primitive/texturedtriangle.cpp \
 
 
 
 ###  RENDERER  #################################################################
 
 HEADERS +=\
+renderer/backgroundrenderer.h \
 renderer/depthrenderer.h \
 renderer/desaturationrenderer.h \
 renderer/renderer.h \
@@ -85,6 +87,7 @@ renderer/hazerenderer.h \
 renderer/simplerenderer.h \
 
 SOURCES +=\
+renderer/backgroundrenderer.cpp \
 renderer/depthrenderer.cpp \
 renderer/desaturationrenderer.cpp \
 renderer/hazerenderer.cpp \
@@ -110,6 +113,7 @@ HEADERS +=\
 shader/brdfshader.h \
 shader/shader.h \
 shader/flatshader.h \
+shader/materialshader.h \
 shader/phongshader.h \
 shader/lambertshader.h \
 shader/mirrorshader.h \
@@ -119,6 +123,7 @@ shader/simpleshadowshader.h \
 SOURCES +=\
 shader/brdfshader.cpp \
 shader/flatshader.cpp \
+shader/materialshader.cpp \
 shader/phongshader.cpp \
 shader/lambertshader.cpp \
 shader/mirrorshader.cpp \
