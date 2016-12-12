@@ -154,16 +154,16 @@ bool ObjModel::intersect(Ray * ray) const {
   // Ray box intersection
   bool hit = false;
 
-  BoundingBox box(this->minBounds, this->maxBounds);
+  //BoundingBox box(this->minBounds, this->maxBounds);
 
-  if (box.intersects(*ray)) {
+  //if (box.intersects(*ray)) {
       for (unsigned int i = 0; i < this->primitives.size(); ++i) {
         hit |= this->primitives[i]->intersect(ray);
       }
       return hit;
-  }
+  //}
 
-  return hit;
+  //return hit;
 }
 
 Vector3d ObjModel::normalFromRay(Ray const& ray) const {

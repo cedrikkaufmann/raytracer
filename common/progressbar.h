@@ -2,10 +2,12 @@
 #define PROGRESSBAR_H
 
 #include <iostream>
+#include <time.h>
 
 struct ProgressBar {
   // Components
   int barWidth;
+  time_t startTime, progressTime;
 
   // Constructor
   ProgressBar() {}
@@ -13,6 +15,7 @@ struct ProgressBar {
     : barWidth(barWidth){}
 
   void progress(float progress);
+  void start();
   void end();
 };
 

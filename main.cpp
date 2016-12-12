@@ -41,12 +41,12 @@ int main() {
 
   // BRDF shader
   // Implement the BRDF shader and include the following:
-  //BrdfShader * goldBrdf = new BrdfShader("gold-paint.binary", Color(5, 5, 5));
-  //BrdfShader * greenBrdf = new BrdfShader("green-acrylic.binary", Color(5, 5, 5));
-  //scene.add(goldBrdf);
-  //scene.add(greenBrdf);
-  //scene.add(new Sphere(Vector3d(0,0,20),5,goldBrdf));
-  //scene.add(new Sphere(Vector3d(-12,0,20),5,greenBrdf));
+  BrdfShader * goldBrdf = new BrdfShader("gold-paint.binary", Color(5, 5, 5));
+  BrdfShader * greenBrdf = new BrdfShader("green-acrylic.binary", Color(5, 5, 5));
+  scene.add(goldBrdf);
+  scene.add(greenBrdf);
+  scene.add(new Sphere(Vector3d(0,0,20),5,goldBrdf));
+  scene.add(new Sphere(Vector3d(-12,0,20),5,greenBrdf));
 
   // Add some lights
   scene.add(new PointLight(Vector3d(20,10,30),400));

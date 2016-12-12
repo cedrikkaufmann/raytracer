@@ -1,58 +1,40 @@
 #include "shader/phongshader.h"
+#include "light/light.h"
 #include "primitive/primitive.h"
 #include "scene/scene.h"
-#include "light/light.h"
 
-PhongShader::PhongShader(float diffuseCoefficient, float specularCoefficient, float shininessExponent, Color const& objectColor)
-    : diffuseCoefficient(diffuseCoefficient), specularCoefficient(specularCoefficient), shininessExponent(shininessExponent),
-      objectColor(objectColor) {}
+PhongShader::PhongShader(float diffuseCoefficient, float specularCoefficient,
+                         float shininessExponent, Color const& objectColor)
+  : objectColor(objectColor),
+    diffuseCoefficient(diffuseCoefficient),
+    specularCoefficient(specularCoefficient),
+    shininessExponent(shininessExponent) {}
 
 Color PhongShader::shade(Ray * ray) const {
-    /* get shading normal */
-    Vector3d normal = ray->primitive->normalFromRay(*ray);
+    // First we get the normal of the primitive, which was hit
+    Vector3d normalVector = ray->primitive->normalFromRay(*ray);
 
-    /* turn normal to front */
-    if (dotProduct(normal, ray->direction) > 0)
-    {
-        normal = -normal;
-    }
+    // Compute illumination
+    Color illuminationColor;
+    std::vector<Light*> lights = this->parentScene_->lights();
+    for (unsigned int i = 0; i < lights.size(); ++i) {
+        Light::Illumination illum;
+        illum = lights.at(i)->illuminate(*ray);
 
-    /* calculate reflection vector */
-    Vector3d reflect = - ray->direction + 2 * dotProduct(normal, ray->direction) * normal;
+        // Diffuse term.
+        Color const diffuseColor = std::max(dotProduct(-illum.direction, normalVector),0.0f)
+                * diffuseCoefficient* illum.color;
+        illuminationColor = illuminationColor + diffuseColor;
 
-    Color result = objectColor;
-
-    /* shadow ray starting from surface point */
-    Ray shadow;
-    shadow.origin = ray->origin + ray->length * ray->direction;
-
-    /* iterate over all light sources */
-    for (unsigned int l=0; l< this->parentScene_->lights().size(); l++)
-    {
-        /* get directionection to light, and intensity */
-        //this->parentScene_->lights()[l]->illuminate(shadow);
-        /* diffuse term */
-        float cosLightNormal = dotProduct(shadow.direction, normal);
-
-        if (cosLightNormal > 0) {
-            if (this->parentScene_->findOcclusion(&shadow))
-            {
-                continue;
-            }
-
-            Color diffuseColor = diffuseCoefficient * objectColor;
-            result = result + diffuseColor * cosLightNormal * this->parentScene_->lights()[l]->intensity();
-        }
-
-        /* specular term */
-        float cosLightReflect = dotProduct(shadow.direction, reflect);
-        if (cosLightReflect > 0)
-        {
-            Color specularColor = specularCoefficient * Color(1,1,1); // white highlight;
-            result = result + specularColor * powf(cosLightReflect, shininessExponent) * this->parentScene_->lights()[l]->intensity();
+        // Specular term (based on reflection vector).
+        Vector3d const& reflectionVector = ray->direction - 2*dotProduct(normalVector,ray->direction)*normalVector;
+        float cosine = dotProduct(-illum.direction, reflectionVector);
+        if (cosine > 0) {
+            Color specularColor = specularCoefficient*Color(1, 1, 1)  // white highlight
+                    * powf(cosine, shininessExponent) // shininess factor
+                    * illum.color;
+            illuminationColor = illuminationColor + specularColor;
         }
     }
-
-    return result;
-
+    return illuminationColor * this->objectColor;
 }

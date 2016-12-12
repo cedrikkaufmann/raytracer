@@ -2,7 +2,7 @@ CONFIG += console c++11
 
 TEMPLATE = app
 SOURCES += main.cpp \
-    common/hsvcolor.cpp
+    common/advancedcolor.cpp
 
 
 
@@ -18,7 +18,7 @@ common/ray.h \
 common/texture.h \
 common/vector2d.h \
 common/vector3d.h \
-    common/hsvcolor.h
+    common/advancedcolor.h
 
 SOURCES +=\
 common/boundingbox.cpp \

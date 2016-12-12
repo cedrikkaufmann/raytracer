@@ -12,7 +12,12 @@ void ProgressBar::progress(float progress) {
     std::cout.flush();
 }
 
+void ProgressBar::start() {
+    startTime = clock();
+}
+
 void ProgressBar::end() {
+    progressTime = (clock() - startTime) / CLOCKS_PER_SEC;
     progress(1.0f);
     std::cout << std::endl;
 }

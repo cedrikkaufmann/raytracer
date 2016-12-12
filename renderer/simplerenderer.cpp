@@ -3,16 +3,12 @@
 #include "camera/camera.h"
 #include "common/progressbar.h"
 
-#include <time.h>
-
 Texture SimpleRenderer::renderImage(Scene const& scene,
                                     Camera const& camera,
                                     int width, int height) {
-
-  double time1= 0.0, tstart;
-  tstart = clock();
-
   ProgressBar bar(70);
+  bar.start();
+
   Texture image(width, height);
   float const aspectRatio = static_cast<float>(height)/width;
   for (int x = 0; x < image.width(); ++x) {
@@ -28,10 +24,7 @@ Texture SimpleRenderer::renderImage(Scene const& scene,
 
   bar.end();
 
-  time1 += clock() - tstart;
-  time1 = time1 / CLOCKS_PER_SEC;
-
-  std::cout << "Rendering time: " << time1 << " sec." << std::endl;
+  std::cout << "Rendering time: " << bar.progressTime << " sec." << std::endl;
 
   return image;
 }
