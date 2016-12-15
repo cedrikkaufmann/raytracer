@@ -107,11 +107,11 @@ int main() {
   // Implement the TexturedTriangle and add it to the ObjModel,
   // then uncomment the following code to add the spaceship:
 
-  /* ObjModel * spaceship = new ObjModel(spaceshipShader);
+  ObjModel * spaceship = new ObjModel(spaceshipShader);
   spaceship->loadObj("data/space_frigate_6.obj",
                   Vector3d(-1,1,1)/20, Vector3d(-1.3,-0.3,0.7),
                   ObjModel::TEXTURENORMALS, ObjModel::TEXTURED);
-  scene.add(spaceship); */
+  scene.add(spaceship);
 
   // Add some lights
   scene.add(new DirectionalLight(normalized(Vector3d(-0.8,-0.4,0.4)), 2.f));

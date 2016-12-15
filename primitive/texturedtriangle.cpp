@@ -17,6 +17,15 @@ TexturedTriangle::TexturedTriangle(Vector3d const& a, Vector3d const& b, Vector3
 
 Vector2d TexturedTriangle::uvFromRay(Ray const& ray) const {
   // Implement me!
-  Vector2d normal(0,0);
+
+    // Simply calculate angle
+    float const r = length(ray.direction);
+    float const theta = std::acos(ray.direction.z / r);
+    float const phi = std::atan2(ray.direction.y, ray.direction.x);
+
+    float const u = theta / PI;
+    float const v = phi / (2*PI);
+
+  Vector2d normal(u, v);
   return normal;
 }
