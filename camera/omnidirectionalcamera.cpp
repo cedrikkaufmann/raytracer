@@ -16,6 +16,4 @@ Ray OmnidirectionalCamera::castRay(float x, float y) const {
     ray.direction = Vector3d(u, v, z);
     normalize(&ray.direction);
     return ray;
-
-  return Ray();
 }
