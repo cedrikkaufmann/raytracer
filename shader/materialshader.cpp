@@ -66,9 +66,22 @@ Color MaterialShader::shade(Ray * ray) const {
 
   // Alpha map
   if (!this->alphaMap.isNull()) {
-      Color alphaColor = this->alphaMap.color(surfacePosition);
-      float const alpha = 1.0f - (alphaColor.r + alphaColor.b + alphaColor.g) / 3;
-      fragmentColor = alpha * alphaColor + (1 - alpha) * fragmentColor;
+      // get color from alpha map
+      Color mapColor = this->alphaMap.color(surfacePosition);
+      // caluclate alpha value of given point
+      float const alpha = 1.0f - (mapColor.r + mapColor.b + mapColor.g) / 3;
+
+      if (alpha < 1.0f) {
+          // create copy of ray for propagation
+          Ray alphaRay = *ray;
+          alphaRay.primitive = nullptr;
+          alphaRay.length = INFINITY;
+
+          // trace next color from propagated ray
+          Color backColor = this->parentScene_->traceRay(&alphaRay);
+          // blending colors using alpha channel
+          fragmentColor = alpha * fragmentColor + (1 - alpha) * backColor;
+      }
   }
 
   return fragmentColor;
