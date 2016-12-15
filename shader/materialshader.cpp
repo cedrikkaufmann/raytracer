@@ -68,7 +68,9 @@ Color MaterialShader::shade(Ray * ray) const {
         Vector3d const& reflectionVector = ray->direction - 2*dotProduct(normal,ray->direction)*normal;
         float cosine = dotProduct(-illum.direction, reflectionVector);
         if (cosine > 0) {
-            Color specularColor = this->specularCoefficient*this->specularMap.color(surfacePosition)
+            Color specularMapColor = this->specularMap.color(surfacePosition);
+            float const grayscale = (specularMapColor.r + specularMapColor.g + specularMapColor.b)/3;
+            Color specularColor = this->specularCoefficient*Color(grayscale, grayscale, grayscale)
                     * powf(cosine, this->shininessExponent) // shininess factor
                     * illum.color;
             fragmentColor += specularColor;
@@ -79,9 +81,9 @@ Color MaterialShader::shade(Ray * ray) const {
   // Alpha map
   if (!this->alphaMap.isNull()) {
       // get color from alpha map
-      Color mapColor = this->alphaMap.color(surfacePosition);
+      Color alphaMapColor = this->alphaMap.color(surfacePosition);
       // caluclate alpha value of given point
-      float const alpha = 1.0f - (mapColor.r + mapColor.b + mapColor.g) / 3;
+      float const alpha = 1.0f - (alphaMapColor.r + alphaMapColor.b + alphaMapColor.g) / 3;
 
       if (alpha < 1.0f) {
           // create copy of ray for propagation
