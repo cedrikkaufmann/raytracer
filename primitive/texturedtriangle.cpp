@@ -1,5 +1,4 @@
 #include "primitive/texturedtriangle.h"
-#include "iostream"
 
 // Constructor /////////////////////////////////////////////////////////////////
 
@@ -20,17 +19,14 @@ Vector2d TexturedTriangle::uvFromRay(Ray const& ray) const {
   //float const r = length(ray.direction);
   //float const theta = std::acos(ray.direction.z / r);
   //float const phi = std::atan2(ray.direction.y, ray.direction.x);
+  //float const u = theta / PI;
+  //float const v = phi / (2*PI);
 
   float const phi = std::acos(ray.direction.y);
   float const rho = std::atan2(ray.direction.z, ray.direction.x) + PI;
 
   float const u = rho / (2 * PI);
   float const v = 1.0f - phi/PI;
-
-  //float const u = theta / PI;
-  //float const v = phi / (2*PI);
-
-  std::cout << "u:" << u << "; v:" << v<< std::endl;
 
   Vector2d normal(u, v);
   return normal;
