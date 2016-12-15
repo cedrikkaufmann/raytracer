@@ -123,13 +123,14 @@ void Texture::setPixelAt(int x, int y, Color const& color) {
 }
 
 Color Texture::color(float u, float v) const {
+  // Bilinear Filter
   // calculate nearest rastering coordinates of their texture coordinates
   float x = u* this->width();
   float y = v* this->height();
   float x1 = floor(u* this->width());
   float y1 = floor(v* this->height());
 
-  // check for bounds
+  // check for texture bounds
   if (x1 < 0)
       x1 = 0;
   if (y1 < 0)
@@ -138,7 +139,7 @@ Color Texture::color(float u, float v) const {
   float x2 = x1+1;
   float y2 = y1+1;
 
-  // check for bounds
+  // check for texture bounds
   if (x2 > (this->width() - 1)) {
     x2 = this->width() - 1;
     x1 = x2-1;
@@ -163,9 +164,9 @@ Color Texture::color(float u, float v) const {
   Color f2 = alpha * pixel(x1,y2) + beta * pixel(x2,y2);
 
   // finally calculate interpolated color
-  Color filter( ((y2 - y) / delta_y2_y1) * f1 + ((y - y1) / delta_y2_y1) * f2 );
+  Color bilinearFilter( ((y2 - y) / delta_y2_y1) * f1 + ((y - y1) / delta_y2_y1) * f2 );
 
-  return filter;
+  return bilinearFilter;
 }
 
 Color Texture::color(Vector2d const& surfacePosition) const {
