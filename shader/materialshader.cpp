@@ -63,6 +63,10 @@ Color MaterialShader::shade(Ray * ray) const {
     else
       fragmentColor += diffuseColor*this->objectColor;
 
+    //Alpha term
+    Color color = alphaMap.color(surfacePosition.u, surfacePosition.v);
+    float const average = (color.r + color.b + color.g) / 3.0f;
+    setOpacity(1.0f - average);
   }
 
   return fragmentColor;
