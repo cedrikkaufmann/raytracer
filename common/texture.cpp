@@ -123,7 +123,49 @@ void Texture::setPixelAt(int x, int y, Color const& color) {
 }
 
 Color Texture::color(float u, float v) const {
-  return this->pixel(u * this->width(), v * this->height());
+  // calculate nearest rastering coordinates of their texture coordinates
+  float x = u* this->width();
+  float y = v* this->height();
+  float x1 = floor(u* this->width());
+  float y1 = floor(v* this->height());
+
+  // check for bounds
+  if (x1 < 0)
+      x1 = 0;
+  if (y1 < 0)
+      y1 = 0;
+
+  float x2 = x1+1;
+  float y2 = y1+1;
+
+  // check for bounds
+  if (x2 > (this->width() - 1)) {
+    x2 = this->width() - 1;
+    x1 = x2-1;
+  }
+  if (y2 > (this->height() - 1)) {
+    y2 = this->height() - 1;
+    y1 = y2-1;
+  }
+
+  // pre calculation of coordinate's delta
+  float const delta_x_x1 = x-x1;
+  float const delta_x2_x = x2-x;
+  int const delta_x2_x1 = x2-x1;
+  int const delta_y2_y1 = y2-y1;
+
+  // pre calculation of weight coefficient
+  float alpha = delta_x2_x / delta_x2_x1;
+  float beta = delta_x_x1 / delta_x2_x1;
+
+  // calculate weighted color for pixels of rastering coordinates
+  Color f1 = alpha * pixel(x1,y1) + beta * pixel(x2,y1);
+  Color f2 = alpha * pixel(x1,y2) + beta * pixel(x2,y2);
+
+  // finally calculate interpolated color
+  Color filter( ((y2 - y) / delta_y2_y1) * f1 + ((y - y1) / delta_y2_y1) * f2 );
+
+  return filter;
 }
 
 Color Texture::color(Vector2d const& surfacePosition) const {

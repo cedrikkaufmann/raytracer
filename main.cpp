@@ -103,10 +103,6 @@ int main() {
   spaceshipShader->setReflectionMap(spaceshipReflection);
   scene.add(spaceshipShader);
 
-  // IMPLEMENT ME!
-  // Implement the TexturedTriangle and add it to the ObjModel,
-  // then uncomment the following code to add the spaceship:
-
   ObjModel * spaceship = new ObjModel(spaceshipShader);
   spaceship->loadObj("data/space_frigate_6.obj",
                   Vector3d(-1,1,1)/20, Vector3d(-1.3,-0.3,0.7),
