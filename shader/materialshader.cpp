@@ -3,6 +3,7 @@
 #include "light/light.h"
 #include "primitive/primitive.h"
 #include "scene/scene.h"
+#include "iostream"
 
 Vector3d normalInTangentSpace(Vector3d const& surfaceNormal,
                               Vector3d const& textureNormal) {
@@ -62,6 +63,13 @@ Color MaterialShader::shade(Ray * ray) const {
       fragmentColor += diffuseColor*this->diffuseMap.color(surfacePosition);
     else
       fragmentColor += diffuseColor*this->objectColor;
+  }
+
+  // Alpha map
+  if (!this->alphaMap.isNull()) {
+      Color color = this->alphaMap.color(ray->surfacePosition);
+      float const opacity = 1.0f - (color.r + color.b + color.g) / 3;
+      fragmentColor *= opacity;
   }
 
   return fragmentColor;
