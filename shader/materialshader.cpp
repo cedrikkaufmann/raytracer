@@ -62,6 +62,18 @@ Color MaterialShader::shade(Ray * ray) const {
       fragmentColor += diffuseColor*this->diffuseMap.color(surfacePosition);
     else
       fragmentColor += diffuseColor*this->objectColor;
+
+    // Specular term (based on reflection vector).
+    if (!this->specularMap.isNull()) {
+        Vector3d const& reflectionVector = ray->direction - 2*dotProduct(normal,ray->direction)*normal;
+        float cosine = dotProduct(-illum.direction, reflectionVector);
+        if (cosine > 0) {
+            Color specularColor = this->specularCoefficient*this->specularMap.color(surfacePosition)
+                    * powf(cosine, this->shininessExponent) // shininess factor
+                    * illum.color;
+            fragmentColor += specularColor;
+        }
+    }
   }
 
   // Alpha map
@@ -77,7 +89,7 @@ Color MaterialShader::shade(Ray * ray) const {
           alphaRay.primitive = nullptr;
           alphaRay.length = INFINITY;
 
-          // trace next color from propagated ray
+          // trace color from propagated ray
           Color backColor = this->parentScene_->traceRay(&alphaRay);
           // blending colors using alpha channel
           fragmentColor = alpha * fragmentColor + (1 - alpha) * backColor;
