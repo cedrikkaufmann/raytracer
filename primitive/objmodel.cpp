@@ -2,6 +2,7 @@
 #include <cstring>
 #include "primitive/objmodel.h"
 #include "primitive/smoothtriangle.h"
+#include "primitive/texturedtriangle.h"
 #include "primitive/triangle.h"
 
 // A small struct to help us organize the index data
@@ -143,6 +144,11 @@ bool ObjModel::loadObj(char const* fileName,
       this->primitives.push_back(new SmoothTriangle(triangleData[0].vertex, triangleData[1].vertex, triangleData[2].vertex,
           triangleData[0].normal, triangleData[1].normal, triangleData[2].normal, this->shader()));
       break;
+    case TEXTURED:
+      this->primitives.push_back(new TexturedTriangle(triangleData[0].vertex, triangleData[1].vertex, triangleData[2].vertex,
+                triangleData[0].normal, triangleData[1].normal, triangleData[2].normal,
+                triangleData[0].textureCoordinates, triangleData[1].textureCoordinates, triangleData[2].textureCoordinates,
+                this->shader()));
     }
 
   }

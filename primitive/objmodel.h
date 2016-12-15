@@ -13,6 +13,7 @@ public:
     TEXTURENORMALS
   };
   enum TriangleStyle {
+    TEXTURED,
     SMOOTH,
     STANDARD
   };
