@@ -127,8 +127,8 @@ Color Texture::color(float u, float v) const {
   // calculate nearest rastering coordinates of their texture coordinates
   float x = u* this->width();
   float y = v* this->height();
-  float x1 = floor(u* this->width());
-  float y1 = floor(v* this->height());
+  float x1 = floor(x);
+  float y1 = floor(y);
 
   // check for texture bounds
   if (x1 < 0)
@@ -159,11 +159,11 @@ Color Texture::color(float u, float v) const {
   float alpha = delta_x2_x / delta_x2_x1;
   float beta = delta_x_x1 / delta_x2_x1;
 
-  // calculate weighted color for pixels of rastering coordinates
+  // horizontal interpolation
   Color f1 = alpha * pixel(x1,y1) + beta * pixel(x2,y1);
   Color f2 = alpha * pixel(x1,y2) + beta * pixel(x2,y2);
 
-  // finally calculate interpolated color
+  // vertical interpolation
   Color bilinearFilter( ((y2 - y) / delta_y2_y1) * f1 + ((y - y1) / delta_y2_y1) * f2 );
 
   return bilinearFilter;
