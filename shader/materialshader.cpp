@@ -83,7 +83,7 @@ Color MaterialShader::shade(Ray * ray) const {
       // get color from alpha map
       Color alphaMapColor = this->alphaMap.color(surfacePosition);
       // caluclate alpha value of given point
-      float const alpha = 1.0f - (alphaMapColor.r + alphaMapColor.b + alphaMapColor.g) / 3;
+      float const alpha = (alphaMapColor.r + alphaMapColor.b + alphaMapColor.g) / 3;
 
       if (alpha < 1.0f) {
           // create copy of ray for propagation

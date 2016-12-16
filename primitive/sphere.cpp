@@ -34,44 +34,32 @@ bool Sphere::intersect(Ray * ray) const {
   if (t < EPSILON || ray->length < t)
     return false;
 
-  // Determine the surface position
-  /*
-   * IMPLEMENT ME!
-   */
-
   // Prepare the ray
   ray->length = t;
   ray->primitive = this;
-  //ray->surfacePosition = ;
+
+  // Determine the surface position
+  Vector3d const normal = this->normalFromRay(*ray);
+  float const phi = std::acos(normal.y);
+  float const rho = std::atan2(normal.z, normal.x) + PI;
+  ray->surfacePosition = Vector2d(rho/(2*PI), phi/PI);
+
   return true;
 }
 
 Vector3d Sphere::normalFromRay(Ray const& ray) const {
-    Vector3d const target = ray.origin + ray.length*ray.direction;
-    return normalized(target - this->center_);
+  Vector3d const target = ray.origin + ray.length*ray.direction;
+  return normalized(target - this->center_);
 }
 
 
 // Bounding box ////////////////////////////////////////////////////////////////
 
 float Sphere::minimumBounds(int dimension) const {
-  /*
-  * IMPLEMENT ME!
-  *
-  * These values are used for determining the bounding box.
-  * This should return the minimum value along the given dimension.
-  *
-  */
-  return -INFINITY;
+  return this->center_[dimension] - this->radius_;
 }
 
 float Sphere::maximumBounds(int dimension) const {
-  /*
-  * IMPLEMENT ME!
-  *
-  * These values are used for determining the bounding box.
-  * This should return the maximum value along the given dimension.
-  *
-  */
-  return +INFINITY;
+  return this->center_[dimension] + this->radius_;
 }
+

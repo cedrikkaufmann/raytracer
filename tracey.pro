@@ -16,6 +16,7 @@ common/ray.h \
 common/texture.h \
 common/vector2d.h \
 common/vector3d.h \
+common/progressbar.h \
 
 SOURCES +=\
 common/boundingbox.cpp \
@@ -23,6 +24,7 @@ common/color.cpp\
 common/texture.cpp \
 common/vector2d.cpp \
 common/vector3d.cpp \
+common/progressbar.cpp \
 
 
 

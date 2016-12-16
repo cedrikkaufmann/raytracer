@@ -15,19 +15,7 @@ TexturedTriangle::TexturedTriangle(Vector3d const& a, Vector3d const& b, Vector3
 // Primitive functions /////////////////////////////////////////////////////////
 
 Vector2d TexturedTriangle::uvFromRay(Ray const& ray) const {
-  // Simply calculate angle
-  //float const r = length(ray.direction);
-  //float const theta = std::acos(ray.direction.z / r);
-  //float const phi = std::atan2(ray.direction.y, ray.direction.x);
-  //float const u = theta / PI;
-  //float const v = phi / (2*PI);
-
-  float const phi = std::acos(ray.direction.y);
-  float const rho = std::atan2(ray.direction.z, ray.direction.x) + PI;
-
-  float const u = rho / (2 * PI);
-  float const v = 1.0f - phi/PI;
-
-  Vector2d normal(u, v);
+  Vector2d normal = ray.surfacePosition.u * textureCoordinates_[1] + ray.surfacePosition.v * textureCoordinates_[2] + (1 - ray.surfacePosition.u - ray.surfacePosition.v) * textureCoordinates_[0];
+  normalize(&normal);
   return normal;
 }
