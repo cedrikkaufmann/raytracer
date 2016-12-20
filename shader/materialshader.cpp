@@ -46,6 +46,15 @@ Color MaterialShader::shade(Ray * ray) const {
 
   // Normal vector
   Vector3d normal = ray->primitive->normalFromRay(*ray);
+  if (!this->normalMap.isNull()) {
+    Color const normalColor = this->normalMap.color(surfacePosition);
+    Vector3d const textureNormal = Vector3d(-normalColor.r*2.0f,-normalColor.g*2.0f,normalColor.b) + Vector3d(1,1,0);
+    normal = normalInTangentSpace(normal, normalized(textureNormal))
+        * this->normalCoefficient + (1.0f-this->normalCoefficient)*normal;
+  }
+
+  // Reflection vector
+  Vector3d const reflection = normalized(ray->direction - 2*dotProduct(normal,ray->direction)*normal);
 
   // Compute fragment color
   Color fragmentColor;
@@ -59,48 +68,58 @@ Color MaterialShader::shade(Ray * ray) const {
     Color const diffuseColor = std::max(dotProduct(-illum.direction,normal), 0.0f)
         * this->diffuseCoefficient*illum.color;
     if (!this->diffuseMap.isNull())
-      fragmentColor += diffuseColor*this->diffuseMap.color(surfacePosition);
+      fragmentColor += diffuseColor*this->diffuseMap.color(surfacePosition)*this->objectColor;
     else
       fragmentColor += diffuseColor*this->objectColor;
 
-    // Specular term (based on reflection vector).
-    if (!this->specularMap.isNull()) {
-        Vector3d const& reflectionVector = ray->direction - 2*dotProduct(normal,ray->direction)*normal;
-        float cosine = dotProduct(-illum.direction, reflectionVector);
-        if (cosine > 0) {
-            Color specularMapColor = this->specularMap.color(surfacePosition);
-            float const grayscale = (specularMapColor.r + specularMapColor.g + specularMapColor.b)/3;
-            Color specularColor = this->specularCoefficient*Color(grayscale, grayscale, grayscale)
-                    * powf(cosine, this->shininessExponent) // shininess factor
-                    * illum.color;
-            fragmentColor += specularColor;
-        }
+    // Specular term
+    float const cosine = dotProduct(-illum.direction,reflection);
+    if (cosine > 0) {
+      Color const specularColor = std::pow(cosine,shininessExponent)
+          * this->specularCoefficient*illum.color;
+      if (!this->specularMap.isNull())
+        fragmentColor += specularColor*this->specularMap.color(surfacePosition);
+      else
+        fragmentColor += specularColor;
     }
+
   }
 
-  // Alpha map
-  if (!this->alphaMap.isNull()) {
-      // get color from alpha map
-      Color alphaMapColor = this->alphaMap.color(surfacePosition);
-      // caluclate alpha value of given point
-      float const alpha = (alphaMapColor.r + alphaMapColor.b + alphaMapColor.g) / 3;
+  // Alpha term (opacity)
+  float alphaTerm = this->opacity;
+  if (!this->alphaMap.isNull())
+    alphaTerm *= this->alphaMap.color(surfacePosition).r;
+  if (alphaTerm < 1) {
+    Ray alphaRay = *ray;
+    alphaRay.origin = ray->origin + (ray->length+EPSILON)*ray->direction;
+    //alphaRay.direction = ... // The direction stays the same
+    alphaRay.length = INFINITY;
+    alphaRay.primitive = nullptr;
 
-      if (alpha < 1.0f) {
-          // create copy of ray for propagation
-          Ray alphaRay = *ray;
-          alphaRay.primitive = nullptr;
-          alphaRay.length = INFINITY;
+    // Mix the foreground and background colors
+    Color const backgroundColor = this->parentScene_->traceRay(&alphaRay);
+    fragmentColor = alphaTerm*fragmentColor + (1-alphaTerm)*backgroundColor;
+  }
 
-          // trace color from propagated ray
-          Color backColor = this->parentScene_->traceRay(&alphaRay);
-          // blending colors using alpha channel
-          fragmentColor = alpha * fragmentColor + (1 - alpha) * backColor;
-      }
+  // Reflection
+  float reflectanceTerm = this->reflectance;
+  if (!this->reflectionMap.isNull())
+    reflectanceTerm *= this->reflectionMap.color(surfacePosition).r;
+  if (reflectanceTerm > 0.0f) {
+    Ray reflectionRay = *ray;
+    reflectionRay.origin = ray->origin + (ray->length-EPSILON)*ray->direction;
+    reflectionRay.direction = reflection;
+    reflectionRay.length = INFINITY;
+    reflectionRay.primitive = nullptr;
+
+    // Mix the object and reflection colors
+    Color const reflectionColor = this->parentScene_->traceRay(&reflectionRay);
+    fragmentColor = (1-reflectanceTerm)*fragmentColor + reflectanceTerm*reflectionColor;
   }
 
   return fragmentColor;
 }
 
 bool MaterialShader::isTransparent() const {
-  return !this->alphaMap.isNull();
+  return this->opacity < 1.0f || !this->alphaMap.isNull();
 }

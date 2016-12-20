@@ -67,23 +67,12 @@ Vector3d Triangle::normalFromRay(Ray const& ray) const {
 // Bounding box ////////////////////////////////////////////////////////////////
 
 float Triangle::minimumBounds(int dimension) const {
-  /*
-  * IMPLEMENT ME!
-  *
-  * These values are used for determining the bounding box.
-  * This should return the minimum value along the given dimension.
-  *
-  */
-  return -INFINITY;
+  return std::min(this->vertex_[0][dimension],
+      std::min(this->vertex_[1][dimension], this->vertex_[2][dimension]));
 }
 
 float Triangle::maximumBounds(int dimension) const {
-  /*
-  * IMPLEMENT ME!
-  *
-  * These values are used for determining the bounding box.
-  * This should return the maximum value along the given dimension.
-  *
-  */
-  return +INFINITY;
+  return std::max(this->vertex_[0][dimension],
+      std::max(this->vertex_[1][dimension], this->vertex_[2][dimension]));
 }
+

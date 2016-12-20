@@ -15,9 +15,11 @@ SmoothTriangle::SmoothTriangle(Vector3d const& a, Vector3d const& b, Vector3d co
 // Primitive functions /////////////////////////////////////////////////////////
 
 Vector3d SmoothTriangle::normalFromRay(Ray const& ray) const {
-  // Implement me!
-  // Use Triangle::uvFromRay to get the UV coordinates.
-    Vector3d normal = ray.surfacePosition.u * normal_[1] + ray.surfacePosition.v * normal_[2] + (1 - ray.surfacePosition.u - ray.surfacePosition.v) * normal_[0];
-    normalize(&normal);
-  return normal;
+  // this->uvFromRay may be overloaded, e.g. by TexturedTriangle.
+  // Use Triangle::surfacePositionFromRay to get the UV coordinates.
+  Vector2d const surface = Triangle::uvFromRay(ray);
+  return normalized(
+        surface.u * normal_[1]
+      + surface.v * normal_[2]
+      + (1.0f - surface.u - surface.v) * normal_[0]);
 }

@@ -80,7 +80,9 @@ bool Texture::load(char const* fileName) {
   int r, g, b;
 
   for (int y = 0; y < resY; ++y) {
+  //for (int y = resY-1; y >= 0; --y) {
     for (int x = 0; x < resX; ++x)
+    //for (int x = resX-1; x >= 0; --x)
     {
       file >> r >> g >> b;
       Color color(static_cast<float>(r) / 255.0f, static_cast<float>(g) / 255.0f, static_cast<float>(b) / 255.0f);
@@ -115,58 +117,34 @@ bool Texture::save(char const* fileName) const {
 }
 
 Color Texture::pixel(int x, int y) const {
-  return this->image_[x][y];
+  if ((x %= this->width()) < 0)
+      x += this->width();
+    if ((y %= this->height()) < 0)
+      y += this->height();
+    return this->image_[x][y];
 }
 
 void Texture::setPixelAt(int x, int y, Color const& color) {
-  this->image_[x][y] = color;
+  if ((x %= this->width()) < 0)
+      x += this->width();
+    if ((y %= this->height()) < 0)
+      y += this->height();
+    this->image_[x][y] = color;
 }
 
 Color Texture::color(float u, float v) const {
-  // Bilinear Filter
-  // calculate nearest rastering coordinates of their texture coordinates
-  float x = u* this->width();
-  float y = v* this->height();
-  float x1 = floor(x);
-  float y1 = floor(y);
-
-  // check for texture bounds
-  if (x1 < 0)
-      x1 = 0;
-  if (y1 < 0)
-      y1 = 0;
-
-  float x2 = x1+1;
-  float y2 = y1+1;
-
-  // check for texture bounds
-  if (x2 > (this->width() - 1)) {
-    x2 = this->width() - 1;
-    x1 = x2-1;
-  }
-  if (y2 > (this->height() - 1)) {
-    y2 = this->height() - 1;
-    y1 = y2-1;
-  }
-
-  // pre calculation of coordinate's delta
-  float const delta_x_x1 = x-x1;
-  float const delta_x2_x = x2-x;
-  int const delta_x2_x1 = x2-x1;
-  int const delta_y2_y1 = y2-y1;
-
-  // pre calculation of weight coefficient
-  float alpha = delta_x2_x / delta_x2_x1;
-  float beta = delta_x_x1 / delta_x2_x1;
-
-  // horizontal interpolation
-  Color f1 = alpha * pixel(x1,y1) + beta * pixel(x2,y1);
-  Color f2 = alpha * pixel(x1,y2) + beta * pixel(x2,y2);
-
-  // vertical interpolation
-  Color bilinearFilter( ((y2 - y) / delta_y2_y1) * f1 + ((y - y1) / delta_y2_y1) * f2 );
-
-  return bilinearFilter;
+  u = u * this->width() - 0.5f;
+  v = v * this->height() - 0.5f;
+  int const x = std::floor(u);
+  int const y = std::floor(v);
+  float const u_ratio = u - x;
+  float const v_ratio = v - y;
+  float const u_opposite = 1.0f - u_ratio;
+  float const v_opposite = 1.0f - v_ratio;
+  return
+      (this->pixel(x,y+0)*u_opposite + this->pixel(x+1,y+0)*u_ratio) * v_opposite +
+      (this->pixel(x,y+1)*u_opposite + this->pixel(x+1,y+1)*u_ratio) * v_ratio;
+  return Color();
 }
 
 Color Texture::color(Vector2d const& surfacePosition) const {

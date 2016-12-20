@@ -42,23 +42,15 @@ Vector3d InfinitePlane::normalFromRay(Ray const& ray) const {
 // Bounding box ////////////////////////////////////////////////////////////////
 
 float InfinitePlane::minimumBounds(int dimension) const {
-  /*
-  * IMPLEMENT ME!
-  *
-  * These values are used for determining the bounding box.
-  * This should return the minimum value along the given dimension.
-  *
-  */
-  return -INFINITY;
+  if (normal_[dimension] == 1.0f) // plane is orthogonal to the axis
+      return origin_[dimension] - EPSILON;
+    else
+      return -INFINITY;
 }
 
 float InfinitePlane::maximumBounds(int dimension) const {
-  /*
-  * IMPLEMENT ME!
-  *
-  * These values are used for determining the bounding box.
-  * This should return the maximum value along the given dimension.
-  *
-  */
-  return +INFINITY;
+  if (normal_[dimension] == 1.0f) // plane is orthogonal to the axis
+      return origin_[dimension] + EPSILON;
+    else
+      return +INFINITY;
 }

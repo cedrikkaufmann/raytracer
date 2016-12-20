@@ -41,6 +41,9 @@ public:
   void setReflectionMap(Texture const& reflectionMap) {
     this->reflectionMap = reflectionMap;
   }
+  void setReflectance(float reflectance) {
+    this->reflectance = reflectance;
+  }
 
   // Shader functions
   virtual Color shade(Ray * ray) const;
@@ -59,6 +62,7 @@ private:
   float diffuseCoefficient;
 
   Texture reflectionMap;
+  float reflectance;
 
   Texture specularMap;
   float specularCoefficient;
