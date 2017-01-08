@@ -4,6 +4,9 @@
 #include <vector>
 #include "primitive/primitive.h"
 
+// Forward declarations
+class KdTree;
+
 class ObjModel : public Primitive {
 
 public:
@@ -13,13 +16,14 @@ public:
     TEXTURENORMALS
   };
   enum TriangleStyle {
-    TEXTURED,
     SMOOTH,
-    STANDARD
+    STANDARD,
+    TEXTURED
   };
 
   // Constructor
   ObjModel(Shader * shader = nullptr);
+  virtual ~ObjModel();
 
   // Load object data
   bool loadObj(char const* fileName,
@@ -39,6 +43,7 @@ public:
 protected:
   Vector3d minBounds, maxBounds;
   std::vector<Primitive*> primitives;
+  KdTree * tree;
 
 };
 

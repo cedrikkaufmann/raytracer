@@ -12,19 +12,21 @@ common/common.h \
 common/boundingbox.h \
 common/brdfread.h \
 common/color.h \
+common/kdtree.h \
+common/progressbar.h \
 common/ray.h \
 common/texture.h \
 common/vector2d.h \
 common/vector3d.h \
-common/progressbar.h \
 
 SOURCES +=\
 common/boundingbox.cpp \
 common/color.cpp\
+common/kdtree.cpp \
+common/progressbar.cpp \
 common/texture.cpp \
 common/vector2d.cpp \
 common/vector3d.cpp \
-common/progressbar.cpp \
 
 
 

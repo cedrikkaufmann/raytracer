@@ -2,8 +2,10 @@
 #include <cstring>
 #include "primitive/objmodel.h"
 #include "primitive/smoothtriangle.h"
-#include "primitive/texturedtriangle.h"
 #include "primitive/triangle.h"
+
+#include "primitive/texturedtriangle.h"
+#include "common/kdtree.h"
 
 // A small struct to help us organize the index data
 struct InputIndexData {
@@ -13,7 +15,11 @@ struct InputIndexData {
 ObjModel::ObjModel(Shader * shader)
   : Primitive(shader),
     minBounds(Vector3d(+INFINITY,+INFINITY,+INFINITY)),
-    maxBounds(Vector3d(-INFINITY,-INFINITY,-INFINITY)) {}
+    maxBounds(Vector3d(-INFINITY,-INFINITY,-INFINITY)), tree(nullptr) {}
+
+ObjModel::~ObjModel() {
+  delete this->tree;
+}
 
 bool ObjModel::loadObj(char const* fileName,
                        Vector3d const& scale, Vector3d const& translation,
@@ -56,8 +62,8 @@ bool ObjModel::loadObj(char const* fileName,
 
     // Texture coordinates
     if (strncmp(line, "vt ", 2) == 0) {
-      float u, v;
-      sscanf(line, "vt %f %f", &u, &v);
+      float u, v, w;
+      sscanf(line, "vt %f %f %f", &u, &v, &w);
       vtData.push_back(Vector2d(u,v));
     }
 
@@ -68,9 +74,9 @@ bool ObjModel::loadObj(char const* fileName,
 
       case TEXTURENORMALS:
         sscanf(line, "f %d/%d/%d %d/%d/%d %d/%d/%d",
-               &v.indexA, &vn.indexA, &vt.indexA,
-               &v.indexB, &vn.indexB, &vt.indexB,
-               &v.indexC, &vn.indexC, &vt.indexC);
+               &v.indexA, &vt.indexA, &vn.indexA,
+               &v.indexB, &vt.indexB, &vn.indexB,
+               &v.indexC, &vt.indexC, &vn.indexC);
         vIndices.push_back({v.indexA-1, v.indexB-1, v.indexC-1});
         vnIndices.push_back({vn.indexA-1, vn.indexB-1, vn.indexC-1});
         vtIndices.push_back({vt.indexA-1, vt.indexB-1, vt.indexC-1});
@@ -94,7 +100,9 @@ bool ObjModel::loadObj(char const* fileName,
       }
     }
   }
-  printf("(ObjModel): %lu faces parsed\n", vIndices.size());
+  printf("(ObjModel): %lu vertices parsed\n", vData.size());
+  printf("(ObjModel): %lu normals parsed\n", vnData.size());
+  printf("(ObjModel): %lu uv-positions parsed\n", vtData.size());
 
   // For each face, add the corresponding triangle primitive
   for (unsigned int n = 0; n < vIndices.size(); ++n) {
@@ -130,9 +138,9 @@ bool ObjModel::loadObj(char const* fileName,
       this->minBounds.x = std::min(this->minBounds.x, triangleData[k].vertex.x);
       this->minBounds.y = std::min(this->minBounds.y, triangleData[k].vertex.y);
       this->minBounds.z = std::min(this->minBounds.z, triangleData[k].vertex.z);
-      this->maxBounds.x = std::max(this->maxBounds.x, triangleData[k].vertex.x);
-      this->maxBounds.y = std::max(this->maxBounds.y, triangleData[k].vertex.y);
-      this->maxBounds.z = std::max(this->maxBounds.z, triangleData[k].vertex.z);
+      this->maxBounds.x = std::min(this->maxBounds.x, triangleData[k].vertex.x);
+      this->maxBounds.y = std::min(this->maxBounds.y, triangleData[k].vertex.y);
+      this->maxBounds.z = std::min(this->maxBounds.z, triangleData[k].vertex.z);
     }
 
     // Add the primitives
@@ -146,30 +154,31 @@ bool ObjModel::loadObj(char const* fileName,
       break;
     case TEXTURED:
       this->primitives.push_back(new TexturedTriangle(triangleData[0].vertex, triangleData[1].vertex, triangleData[2].vertex,
-                triangleData[0].normal, triangleData[1].normal, triangleData[2].normal,
-                triangleData[0].textureCoordinates, triangleData[1].textureCoordinates, triangleData[2].textureCoordinates,
-                this->shader()));
+          triangleData[0].normal, triangleData[1].normal, triangleData[2].normal,
+          triangleData[0].textureCoordinates, triangleData[1].textureCoordinates, triangleData[2].textureCoordinates,
+          this->shader()));
+      break;
     }
 
   }
   printf("(ObjModel): %lu primitives added\n", this->primitives.size());
+
+  // Initialize the KdTree
+  this->tree = new KdTree(this->primitives);
+
   return true;
 }
 
 bool ObjModel::intersect(Ray * ray) const {
-  // Ray box intersection
+  // Ray box intersection <- out with the old code!
+  /*
   bool hit = false;
-
-  BoundingBox box(this->minBounds, this->maxBounds);
-
-  if (box.intersects(*ray)) {
-      for (unsigned int i = 0; i < this->primitives.size(); ++i) {
-        hit |= this->primitives[i]->intersect(ray);
-      }
-      return hit;
+  for (unsigned int i = 0; i < this->primitives.size(); ++i) {
+    hit |= this->primitives[i]->intersect(ray);
   }
-
   return hit;
+  */
+  return this->tree->intersect(ray);
 }
 
 Vector3d ObjModel::normalFromRay(Ray const& ray) const {

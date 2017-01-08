@@ -1,14 +1,10 @@
 #include "renderer/desaturationrenderer.h"
 #include "scene/scene.h"
 #include "camera/camera.h"
-#include "common/progressbar.h"
 
 Texture DesaturationRenderer::renderImage(Scene const& scene,
                                           Camera const& camera,
                                           int width, int height) {
-  ProgressBar bar(70);
-  bar.start();
-
   Texture image(width, height);
   float const aspectRatio = static_cast<float>(height)/width;
   for (int x = 0; x < image.width(); ++x) {
@@ -19,13 +15,6 @@ Texture DesaturationRenderer::renderImage(Scene const& scene,
       float const gray = (color.r + color.g + color.b)/3;
       image.setPixelAt(x, y, clamped((1-this->intensity_)*color + this->intensity_*Color(gray,gray,gray)));
     }
-
-    bar.progress((float)x/image.width());
   }
-
-  bar.end();
-
-  std::cout << "Rendering time: " << bar.progressTime << " sec." << std::endl;
-
   return image;
 }
