@@ -171,14 +171,14 @@ bool ObjModel::loadObj(char const* fileName,
 
 bool ObjModel::intersect(Ray * ray) const {
   // Ray box intersection <- out with the old code!
-  /*
+
   bool hit = false;
   for (unsigned int i = 0; i < this->primitives.size(); ++i) {
     hit |= this->primitives[i]->intersect(ray);
   }
   return hit;
-  */
-  return this->tree->intersect(ray);
+
+  //return this->tree->intersect(ray);
 }
 
 Vector3d ObjModel::normalFromRay(Ray const& ray) const {

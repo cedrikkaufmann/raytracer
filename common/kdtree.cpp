@@ -71,8 +71,11 @@ Node * KdTree::build(BoundingBox const& boundingBox,
                      std::vector<Primitive*> const& primitives, int depth) {
 
   // Implement me!
+  Node *node;
+  node->primitives = primitives;
 
   // Determine the diameter of the bounding box
+  Vector3d vecHalfDiameter = (boundingBox.maximumCorner - boundingBox.minimumCorner) / 2;
 
   // Test whether we have reached a leaf node...
     //printf("(kDTree): Added leave node with %zu primitives.\n", primitives.size());
@@ -82,11 +85,40 @@ Node * KdTree::build(BoundingBox const& boundingBox,
   // ...
 
   // New bounding boxes and primitive lists
+  const std::vector<Primitive*> leftPrimitives, rightPrimitives;
 
   // Determine the split position
   // Note: Use the median of the minimum bounds of the primitives
 
   // Set the left and right bounding boxes
+  Vector3d splitCornerA, splitCornerB;
+
+  if (depth % 2 == 0) {
+      float medianZ = 0;
+
+      for (unsigned int i = 0; i < primitives.size(); ++i) {
+        medianZ += primitives[i]->minimumBounds[Vector3d::Z];
+      }
+
+      medianZ = medianZ / primitives.size();
+
+      splitCornerA = Vector3d(boundingBox.maximumCorner.x, boundingBox.maximumCorner.y, medianZ);
+      splitCornerB = Vector3d(boundingBox.minimumCorner.x, boundingBox.minimumCorner.y, medianZ);
+  } else {
+      float medianY = 0;
+
+      for (unsigned int i = 0; i < primitives.size(); ++i) {
+        medianY += primitives[i]->minimumBounds[Vector3d::Y];
+      }
+
+      medianY = medianY / primitives.size();
+
+      splitCornerA = Vector3d(boundingBox.maximumCorner.x, medianY, boundingBox.maximumCorner.z);
+      splitCornerB = Vector3d(boundingBox.minimumCorner.x, medianY, boundingBox.minimumCorner.z);
+  }
+
+  BoundingBox leftBox(boundingBox.minimumCorner, splitCornerA);
+  BoundingBox rightBox(splitCornerB, boundingBox.maximumCorner);
 
   // Divide primitives into the left and right lists
   // Remember: A primitive can be in both lists!
@@ -96,11 +128,10 @@ Node * KdTree::build(BoundingBox const& boundingBox,
   //printf("(kDTree): Split %zu -> %zu | %zu\n", primitives.size(), leftPrimitives.size(), rightPrimitives.size());
 
   // Recursively build the tree
+  node->child[0] = build(leftBox, rightPrimitives, depth + 1);
+  node->child[1] = build(rightBox, leftPrimitives, ++depth);
 
-  //return node;
-
-  //Remove this when you are done
-  return nullptr;
+  return node;
 }
 
 bool KdTree::intersect(Ray * ray) const {
