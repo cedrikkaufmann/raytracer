@@ -138,9 +138,9 @@ bool ObjModel::loadObj(char const* fileName,
       this->minBounds.x = std::min(this->minBounds.x, triangleData[k].vertex.x);
       this->minBounds.y = std::min(this->minBounds.y, triangleData[k].vertex.y);
       this->minBounds.z = std::min(this->minBounds.z, triangleData[k].vertex.z);
-      this->maxBounds.x = std::min(this->maxBounds.x, triangleData[k].vertex.x);
-      this->maxBounds.y = std::min(this->maxBounds.y, triangleData[k].vertex.y);
-      this->maxBounds.z = std::min(this->maxBounds.z, triangleData[k].vertex.z);
+      this->maxBounds.x = std::max(this->maxBounds.x, triangleData[k].vertex.x);
+      this->maxBounds.y = std::max(this->maxBounds.y, triangleData[k].vertex.y);
+      this->maxBounds.z = std::max(this->maxBounds.z, triangleData[k].vertex.z);
     }
 
     // Add the primitives
@@ -172,13 +172,15 @@ bool ObjModel::loadObj(char const* fileName,
 bool ObjModel::intersect(Ray * ray) const {
   // Ray box intersection <- out with the old code!
 
+  /*
   bool hit = false;
   for (unsigned int i = 0; i < this->primitives.size(); ++i) {
     hit |= this->primitives[i]->intersect(ray);
   }
   return hit;
+  */
 
-  //return this->tree->intersect(ray);
+  return this->tree->intersect(ray);
 }
 
 Vector3d ObjModel::normalFromRay(Ray const& ray) const {
