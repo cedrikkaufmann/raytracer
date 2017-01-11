@@ -37,9 +37,47 @@ bool Node::traverse(Ray * ray, float t0, float t1) const {
   // Implement me!
 
   // If this is a leaf node, we intersect with all the primitives...
-
+    if(child[0] == nullptr && child[1] == nullptr) {// Blatt
+        for(unsigned int i = 0; i < primitives->size(); ++i) {
+            primitives->at(i)->intersect(ray);
+        }
+        //return (ray->primitive != 0 && ray->remainingBounces() < t1); ?
+    }
   // ... otherwise we continue through the branches
+    else {
+        // implement the traversal of an inner node
+        // think about the correct order
+        Vector3d dir = ray->direction;
+        Vector3d org = ray->origin;
 
+        float d = (split - org[dimension])/dir[dimension];
+
+        int front = 0;
+
+        if(dir[dimension] < 0) {
+            front = 1;
+        }
+
+        int back = 1-front;
+
+        if( d <= t0) {
+            // t0..t1 is totally behind d, only go to the back side
+            return child[back]->traverse(ray, t0, t1);
+        }
+        else if( d >= t1) {
+            // t0..t1 is totally in front of d, only go to the front
+            return child[front]->traverse(ray,t0,t1);
+        }
+        else {
+            // traverse both children, the one in front first
+            if(child[front]->traverse(ray,t0,d)) {
+                return true;
+            }
+            return child[back]->traverse(ray,d,t1);
+        }
+
+        return false;
+    }
   // Determine the order in which we intersect the child nodes
 
   // Traverse the tree and return whether a primitive was hit or not.
