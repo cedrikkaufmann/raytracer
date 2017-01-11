@@ -122,7 +122,7 @@ Node * KdTree::build(BoundingBox const& boundingBox,
   Vector3d vecDiameter = boundingBox.maximumCorner - boundingBox.minimumCorner;
 
   // Test whether we have reached a leaf node
-  if (depth == maximumDepth || primitives.size() < minimumNumberOfPrimitives || length(vecDiameter) <= EPSILON) {
+  if (depth == maximumDepth || primitives.size() <= minimumNumberOfPrimitives || length(vecDiameter) <= EPSILON) {
       node->primitives = new std::vector<Primitive*>();
 
       printf("(kDTree): Added leave node with %zu primitives.\n", primitives.size());
@@ -139,11 +139,6 @@ Node * KdTree::build(BoundingBox const& boundingBox,
   std::vector<Primitive*> leftPrimitives, rightPrimitives;
 
   // Determine the split position
-  // Note: Use the median of the minimum bounds of the primitives
-
-  // Set the left and right bounding boxes
-  Vector3d splitCornerA, splitCornerB;
-
   if (depth % 2 == 0) {
       node->dimension = Vector3d::Z;
   } else {
@@ -175,6 +170,9 @@ Node * KdTree::build(BoundingBox const& boundingBox,
       node->split = coordinates[vecPosition - 1];
   }
 
+  // Calculate new bounding boxes
+  Vector3d splitCornerA, splitCornerB;
+
   if (node->dimension == Vector3d::Z) {
       splitCornerA = Vector3d(boundingBox.maximumCorner.x, boundingBox.maximumCorner.y, node->split);
       splitCornerB = Vector3d(boundingBox.minimumCorner.x, boundingBox.minimumCorner.y, node->split);
@@ -183,7 +181,7 @@ Node * KdTree::build(BoundingBox const& boundingBox,
       splitCornerB = Vector3d(boundingBox.minimumCorner.x, node->split, boundingBox.minimumCorner.z);
   }
 
-  //set kdtree child boxes
+  // Set the left and right bounding boxes
   BoundingBox leftBox(boundingBox.minimumCorner, splitCornerA);
   BoundingBox rightBox(splitCornerB, boundingBox.maximumCorner);
 
@@ -192,28 +190,22 @@ Node * KdTree::build(BoundingBox const& boundingBox,
   // Also remember: You split exactly at the minimum of a primitive,
   // make sure that primitive does *not* appear in both lists!
   for (unsigned int i = 0; i < primitives.size(); ++i) {
+    float minBound, maxBound;
+
     if (node->dimension == Vector3d::Z) {
-        float minBoundZ = primitives[i]->minimumBounds(Vector3d::Z);
-        float maxBoundZ = primitives[i]->maximumBounds(Vector3d::Z);
-
-        if (maxBoundZ <= node->split || minBoundZ < node->split) {
-            leftPrimitives.push_back(primitives[i]);
-        }
-
-        if (minBoundZ >= node->split) {
-            rightPrimitives.push_back(primitives[i]);
-        }
+        minBound = primitives[i]->minimumBounds(Vector3d::Z);
+        maxBound = primitives[i]->maximumBounds(Vector3d::Z);
     } else{
-        float minBoundY = primitives[i]->minimumBounds(Vector3d::Y);
-        float maxBoundY = primitives[i]->maximumBounds(Vector3d::Y);
+        minBound = primitives[i]->minimumBounds(Vector3d::Y);
+        maxBound = primitives[i]->maximumBounds(Vector3d::Y);
+    }
 
-        if (maxBoundY <= node->split || minBoundY < node->split) {
-            leftPrimitives.push_back(primitives[i]);
-        }
+    if (maxBound <= node->split || minBound < node->split) {
+        leftPrimitives.push_back(primitives[i]);
+    }
 
-        if (minBoundY >= node->split) {
-            rightPrimitives.push_back(primitives[i]);
-        }
+    if (minBound >= node->split || maxBound > node->split) {
+        rightPrimitives.push_back(primitives[i]);
     }
   }
 
