@@ -92,10 +92,11 @@ Node * KdTree::build(BoundingBox const& boundingBox,
   Node *node = new Node();
 
   if (depth == maximumDepth || primitives.size() < minimumNumberOfPrimitives) {
+      node->primitives = new std::vector<Primitive*>();
+
       printf("(kDTree): Added leave node with %zu primitives.\n", primitives.size());
 
       for (unsigned int i = 0; i < primitives.size(); ++i) {
-        //segfault:11 occurs by adding primitives to leaf vector
         node->primitives->push_back(primitives[i]);
       }
 
