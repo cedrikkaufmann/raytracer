@@ -16,7 +16,7 @@
 int main() {
   // Set up the environment map scene
   SimpleScene scene;
-  scene.setEnvironmentMap("C:/Users/A/Desktop/computergrafik-raytracing/data/space.ppm");
+  scene.setEnvironmentMap("data/space.ppm");
 
   // Set up the camera
   PerspectiveCamera camera;
@@ -34,13 +34,13 @@ int main() {
 
   // Load the Teapot and the Stadium
   ObjModel * teapot = new ObjModel(teapotMaterial);
-  teapot->loadObj("C:/Users/A/Desktop/computergrafik-raytracing/data/teapot.obj",
+  teapot->loadObj("data/teapot.obj",
                   Vector3d(1,1,1)*70, Vector3d(-0.5,-1,3),
                   ObjModel::NORMALS, ObjModel::SMOOTH);
   scene.add(teapot);
 
   ObjModel * stadium = new ObjModel(stadiumMaterial);
-  stadium->loadObj("C:/Users/A/Desktop/computergrafik-raytracing/data/stadium.obj",
+  stadium->loadObj("data/stadium.obj",
                    Vector3d(1,1,1)*70, Vector3d(-0.5,-1,3),
                    ObjModel::NORMALS, ObjModel::SMOOTH);
   scene.add(stadium);
