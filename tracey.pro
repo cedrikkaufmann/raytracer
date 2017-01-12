@@ -1,7 +1,8 @@
 CONFIG += console c++11
 
 TEMPLATE = app
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    renderer/superrenderer.cpp
 
 
 
@@ -18,6 +19,7 @@ common/ray.h \
 common/texture.h \
 common/vector2d.h \
 common/vector3d.h \
+    renderer/superrenderer.h
 
 SOURCES +=\
 common/boundingbox.cpp \
