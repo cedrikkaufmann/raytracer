@@ -15,14 +15,21 @@ Texture SuperRenderer::renderImage(Scene const& scene,
   float const aspectRatio = static_cast<float>(height)/width;
   for (int x = 0; x < image.width(); ++x) {
     for (int y = 0; y < image.height(); ++y) {
-        Color c;
-        for (int a = 0; a < MULTIPLE_RAYS; a++) {
-            Ray ray = camera.castRay((static_cast<float>(x)/width*2-1),
-                                     (static_cast<float>(y)/height*2-1)*aspectRatio);
-            c += clamped(scene.traceRay(&ray));
+        float renderPosX = (static_cast<float>(x)/width*2-1);
+        float renderPosY =  (static_cast<float>(y)/height*2-1)*aspectRatio;
+
+        Color superSampledColor;
+
+        for (int a = 0; a < superSamplingFactor(); a++) {
+            for (int b = 0; b < superSamplingFactor(); b++) {
+                Ray ray = camera.castRay(renderPosX + a, renderPosY + b);
+                superSampledColor += clamped(scene.traceRay(&ray));
+            }
         }
 
-      image.setPixelAt(x, y, (c / MULTIPLE_RAYS));
+        superSampledColor = superSampledColor / (superSamplingFactor() * superSamplingFactor());
+
+        image.setPixelAt(x, y, superSampledColor);
     }
 
     bar.progress((float)(x) / image.width());

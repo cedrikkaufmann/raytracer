@@ -9,6 +9,7 @@
 #include "primitive/sphere.h"
 
 #include "renderer/simplerenderer.h"
+#include "renderer/superrenderer.h"
 
 #include "shader/lambertshader.h"
 #include "shader/materialshader.h"
@@ -53,8 +54,10 @@ int main() {
 
   // Render the scene
   SimpleRenderer renderer;
-  //renderer.setSuperSamplingFactor(4);
+  SuperRenderer superRenderer;
+  superRenderer.setSuperSamplingFactor(4);
   renderer.renderImage(scene, camera, 1920, 1080).save("result.ppm");
+  superRenderer.renderImage(scene, camera, 1920, 1080).save("superSampledResult.ppm");
 
   return 0;
 }
