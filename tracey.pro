@@ -2,8 +2,6 @@ CONFIG += console c++11
 
 TEMPLATE = app
 SOURCES += main.cpp \
-    ssebench.cpp
-
 
 
 ###  COMMON  ###################################################################
@@ -26,7 +24,6 @@ common/color.cpp\
 common/kdtree.cpp \
 common/progressbar.cpp \
 common/texture.cpp \
-common/vector2d.cpp \
 
 
 

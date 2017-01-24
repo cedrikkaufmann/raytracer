@@ -39,6 +39,7 @@ class Vector3d
   inline Vector3d& operator*=(float v) { mmvalue = _mm_mul_ps(mmvalue, _mm_set1_ps(v)); return *this; }
   inline Vector3d& operator/=(float v) { mmvalue = _mm_div_ps(mmvalue, _mm_set1_ps(v)); return *this; }
 
+  // Access operators
   float & operator[](int const dimension) {
       assert(0 <= dimension && dimension < 3);
       switch (dimension) {
@@ -61,27 +62,8 @@ class Vector3d
       }
    }
 
-  // cross product
-  inline Vector3d cross(const Vector3d& v) const
-  {
-   return _mm_sub_ps(
-    _mm_mul_ps(_mm_shuffle_ps(mmvalue, mmvalue, _MM_SHUFFLE(3, 0, 2, 1)), _mm_shuffle_ps(v.mmvalue, v.mmvalue, _MM_SHUFFLE(3, 1, 0, 2))),
-    _mm_mul_ps(_mm_shuffle_ps(mmvalue, mmvalue, _MM_SHUFFLE(3, 1, 0, 2)), _mm_shuffle_ps(v.mmvalue, v.mmvalue, _MM_SHUFFLE(3, 0, 2, 1)))
-   );
-  }
-
-  // dot product with another vector
-  inline float dot(const Vector3d& v) const { return _mm_cvtss_f32(_mm_dp_ps(mmvalue, v.mmvalue, 0x71)); }
-  // length of the vector
-  inline float length() const { return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(mmvalue, mmvalue, 0x71))); }
-  // 1/length() of the vector
-  inline float rlength() const { return _mm_cvtss_f32(_mm_rsqrt_ss(_mm_dp_ps(mmvalue, mmvalue, 0x71))); }
-  // returns the vector scaled to unit length
-  inline Vector3d normalize() const { return _mm_mul_ps(mmvalue, _mm_rsqrt_ps(_mm_dp_ps(mmvalue, mmvalue, 0x7F))); }
-
   // Member variables
-  union
-  {
+  union {
    struct { float x, y, z; };
    __m128 mmvalue;
   };
@@ -105,8 +87,8 @@ inline Vector3d operator*(float a, const Vector3d& b) { return b * a; }
 inline Vector3d operator/(float a, const Vector3d& b) { return Vector3d(_mm_set1_ps(a)) / b; }
 
 // Useful functions
-inline Vector3d componentProduct(Vector3d const& left, Vector3d const& right) { return Vector3d(left.x*right.x, left.y*right.y, left.z*right.z); }
-inline Vector3d componentQuotient(Vector3d const& left, Vector3d const& right) { return Vector3d(left.x/right.x, left.y/right.y, left.z/right.z); }
+inline Vector3d componentProduct(Vector3d const& left, Vector3d const& right) { return _mm_mul_ps(left.mmvalue, right.mmvalue); }
+inline Vector3d componentQuotient(Vector3d const& left, Vector3d const& right) { return _mm_div_ps(left.mmvalue, right.mmvalue); }
 inline Vector3d crossProduct(Vector3d const& left, Vector3d const& right) {
     return _mm_sub_ps(
      _mm_mul_ps(_mm_shuffle_ps(left.mmvalue, left.mmvalue, _MM_SHUFFLE(3, 0, 2, 1)), _mm_shuffle_ps(right.mmvalue, right.mmvalue, _MM_SHUFFLE(3, 1, 0, 2))),
