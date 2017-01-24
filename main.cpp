@@ -14,8 +14,6 @@
 #include "shader/lambertshader.h"
 #include "shader/materialshader.h"
 
-#include <iostream>
-
 int main() {
   // Set up the environment map scene
   SimpleScene scene;

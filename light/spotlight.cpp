@@ -25,7 +25,7 @@ Light::Illumination SpotLight::illuminate(Ray const& ray) const {
   // Define a secondary ray from the surface point to the light source
   Ray lightRay;
   lightRay.origin = target;
-  lightRay.direction = -illum.direction;
+  lightRay.direction = (-1)*illum.direction;
   lightRay.length = distance - EPSILON;
 
   // Determine the angle of the inner cone
