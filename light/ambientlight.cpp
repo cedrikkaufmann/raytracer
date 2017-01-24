@@ -7,6 +7,6 @@ AmbientLight::AmbientLight(float intensity, Color const& color)
 Light::Illumination AmbientLight::illuminate(Ray const& ray) const {
   return {
     this->color_ * this->intensity_,
-    -ray.primitive->normalFromRay(ray)
+    (-1) * ray.primitive->normalFromRay(ray)
   };
 }

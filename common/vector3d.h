@@ -1,47 +1,121 @@
-#ifndef VECTOR3D_H
-#define VECTOR3D_H
+#ifndef VECTOR3D_SSE_H
+#define VECTOR3D_SSE_H
 
-struct Vector3d {
-  // Components
-  float x,y,z;
+#include <smmintrin.h>
+#include <cassert>
 
+class Vector3d
+{
+ public:
   // Enum for readability
   enum Dimension { X,Y,Z };
 
-  // Constructor
-  Vector3d() : x(0), y(0), z(0) {}
-  Vector3d(float x, float y, float z) : x(x), y(y), z(z) {}
+  // constructors
+  inline Vector3d() : mmvalue(_mm_setzero_ps()) {}
+  inline Vector3d(float x, float y, float z) : mmvalue(_mm_set_ps(0, z, y, x)) {}
+  inline Vector3d(__m128 m) : mmvalue(m) {}
 
-  // Access operators
-  float & operator[](int dimension);
-  float const& operator[](int dimension) const;
+  // arithmetic operators with Vector3d
+  inline Vector3d operator+(const Vector3d& v) const { return _mm_add_ps(mmvalue, v.mmvalue); }
+  inline Vector3d operator-(const Vector3d& v) const { return _mm_sub_ps(mmvalue, v.mmvalue); }
+  inline Vector3d operator*(const Vector3d& v) const { return _mm_mul_ps(mmvalue, v.mmvalue); }
+  inline Vector3d operator/(const Vector3d& v) const { return _mm_div_ps(mmvalue, v.mmvalue); }
+
+  // op= operators
+  inline Vector3d& operator+=(const Vector3d& v) { mmvalue = _mm_add_ps(mmvalue, v.mmvalue); return *this; }
+  inline Vector3d& operator-=(const Vector3d& v) { mmvalue = _mm_sub_ps(mmvalue, v.mmvalue); return *this; }
+  inline Vector3d& operator*=(const Vector3d& v) { mmvalue = _mm_mul_ps(mmvalue, v.mmvalue); return *this; }
+  inline Vector3d& operator/=(const Vector3d& v) { mmvalue = _mm_div_ps(mmvalue, v.mmvalue); return *this; }
+
+  // arithmetic operators with float
+  inline Vector3d operator+(float v) const { return _mm_add_ps(mmvalue, _mm_set1_ps(v)); }
+  inline Vector3d operator-(float v) const { return _mm_sub_ps(mmvalue, _mm_set1_ps(v)); }
+  inline Vector3d operator*(float v) const { return _mm_mul_ps(mmvalue, _mm_set1_ps(v)); }
+  inline Vector3d operator/(float v) const { return _mm_div_ps(mmvalue, _mm_set1_ps(v)); }
+
+  // op= operators with float
+  inline Vector3d& operator+=(float v) { mmvalue = _mm_add_ps(mmvalue, _mm_set1_ps(v)); return *this; }
+  inline Vector3d& operator-=(float v) { mmvalue = _mm_sub_ps(mmvalue, _mm_set1_ps(v)); return *this; }
+  inline Vector3d& operator*=(float v) { mmvalue = _mm_mul_ps(mmvalue, _mm_set1_ps(v)); return *this; }
+  inline Vector3d& operator/=(float v) { mmvalue = _mm_div_ps(mmvalue, _mm_set1_ps(v)); return *this; }
+
+  float & operator[](int const dimension) {
+      assert(0 <= dimension && dimension < 3);
+      switch (dimension) {
+        case Dimension::X: return this->x;
+        case Dimension::Y: return this->y;
+        case Dimension::Z: return this->z;
+        default: // This must never happen
+            return this->x;
+      }
+   }
+
+   float const& operator[](int const dimension) const {
+      assert(0 <= dimension && dimension < 3);
+      switch (dimension) {
+        case Dimension::X: return this->x;
+        case Dimension::Y: return this->y;
+        case Dimension::Z: return this->z;
+        default: // This must never happen
+            return this->x;
+      }
+   }
+
+  // cross product
+  inline Vector3d cross(const Vector3d& v) const
+  {
+   return _mm_sub_ps(
+    _mm_mul_ps(_mm_shuffle_ps(mmvalue, mmvalue, _MM_SHUFFLE(3, 0, 2, 1)), _mm_shuffle_ps(v.mmvalue, v.mmvalue, _MM_SHUFFLE(3, 1, 0, 2))),
+    _mm_mul_ps(_mm_shuffle_ps(mmvalue, mmvalue, _MM_SHUFFLE(3, 1, 0, 2)), _mm_shuffle_ps(v.mmvalue, v.mmvalue, _MM_SHUFFLE(3, 0, 2, 1)))
+   );
+  }
+
+  // dot product with another vector
+  inline float dot(const Vector3d& v) const { return _mm_cvtss_f32(_mm_dp_ps(mmvalue, v.mmvalue, 0x71)); }
+  // length of the vector
+  inline float length() const { return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(mmvalue, mmvalue, 0x71))); }
+  // 1/length() of the vector
+  inline float rlength() const { return _mm_cvtss_f32(_mm_rsqrt_ss(_mm_dp_ps(mmvalue, mmvalue, 0x71))); }
+  // returns the vector scaled to unit length
+  inline Vector3d normalize() const { return _mm_mul_ps(mmvalue, _mm_rsqrt_ps(_mm_dp_ps(mmvalue, mmvalue, 0x7F))); }
+
+  // Member variables
+  union
+  {
+   struct { float x, y, z; };
+   __m128 mmvalue;
+  };
 };
 
-// Comparison operators
-bool operator==(Vector3d const& left, Vector3d const& right);
-bool operator!=(Vector3d const& left, Vector3d const& right);
+// Comparison operators ////////////////////////////////////////////////////////
 
-// Arithmetic operators
-Vector3d operator+(Vector3d const& left, Vector3d const& right);
-Vector3d operator-(Vector3d const& right);
-Vector3d operator-(Vector3d const& left, Vector3d const& right);
-Vector3d operator*(Vector3d const& left, float right);
-Vector3d operator*(float left, Vector3d const& right);
-Vector3d operator/(Vector3d const& left, float right);
+inline bool operator==(Vector3d const& left, Vector3d const& right) {
+  if(_mm_test_all_ones(_mm_cmpeq_epi8(left.mmvalue, right.mmvalue))) {
+    return true;
+  } else {
+    return false;
+  }
+}
+inline bool operator!=(Vector3d const& left, Vector3d const& right) { return !(left == right); }
 
-// Assignment operators
-Vector3d & operator+=(Vector3d & left, Vector3d const& right);
-Vector3d & operator-=(Vector3d & left, Vector3d const& right);
-Vector3d & operator*=(Vector3d & left, float right);
-Vector3d & operator/=(Vector3d & left, float right);
+// Arithmethic operators float with Vector3d
+inline Vector3d operator+(float a, const Vector3d& b) { return b + a; }
+inline Vector3d operator-(float a, const Vector3d& b) { return Vector3d(_mm_set1_ps(a)) - b; }
+inline Vector3d operator*(float a, const Vector3d& b) { return b * a; }
+inline Vector3d operator/(float a, const Vector3d& b) { return Vector3d(_mm_set1_ps(a)) / b; }
 
 // Useful functions
-Vector3d componentProduct(Vector3d const& left, Vector3d const& right);
-Vector3d componentQuotient(Vector3d const& left, Vector3d const& right);
-Vector3d crossProduct(Vector3d const& left, Vector3d const& right);
-float dotProduct(Vector3d const& left, Vector3d const& right);
-float length(Vector3d const& v);
-Vector3d normalized(Vector3d const& v);
-void normalize(Vector3d * v);
+inline Vector3d componentProduct(Vector3d const& left, Vector3d const& right) { return Vector3d(left.x*right.x, left.y*right.y, left.z*right.z); }
+inline Vector3d componentQuotient(Vector3d const& left, Vector3d const& right) { return Vector3d(left.x/right.x, left.y/right.y, left.z/right.z); }
+inline Vector3d crossProduct(Vector3d const& left, Vector3d const& right) {
+    return _mm_sub_ps(
+     _mm_mul_ps(_mm_shuffle_ps(left.mmvalue, left.mmvalue, _MM_SHUFFLE(3, 0, 2, 1)), _mm_shuffle_ps(right.mmvalue, right.mmvalue, _MM_SHUFFLE(3, 1, 0, 2))),
+     _mm_mul_ps(_mm_shuffle_ps(left.mmvalue, left.mmvalue, _MM_SHUFFLE(3, 1, 0, 2)), _mm_shuffle_ps(right.mmvalue, right.mmvalue, _MM_SHUFFLE(3, 0, 2, 1)))
+    );
+}
+inline float dotProduct(Vector3d const& left, Vector3d const& right) { return _mm_cvtss_f32(_mm_dp_ps(left.mmvalue, right.mmvalue, 0x71)); }
+inline float length(Vector3d const& v) { return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(v.mmvalue, v.mmvalue, 0x71))); }
+inline Vector3d normalized(Vector3d const& v) { return _mm_mul_ps(v.mmvalue, _mm_rsqrt_ps(_mm_dp_ps(v.mmvalue, v.mmvalue, 0x7F))); }
+inline void normalize(Vector3d * v) { *v = normalized(*v); }
 
 #endif

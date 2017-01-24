@@ -1,64 +1,41 @@
-#include "camera/perspectivecamera.h"
-#include "scene/simplescene.h"
+#include "common/progressbar.h"
+#include "common/vector3d.h"
 
-#include "light/ambientlight.h"
-#include "light/directionallight.h"
-#include "light/pointlight.h"
-
-#include "primitive/objmodel.h"
-#include "primitive/sphere.h"
-
-#include "renderer/simplerenderer.h"
-#include "renderer/superrenderer.h"
-
-#include "shader/lambertshader.h"
-#include "shader/materialshader.h"
+#include <chrono>
 
 int main() {
-  // Set up the environment map scene
-  SimpleScene scene;
-  scene.setEnvironmentMap("data/space.ppm");
+  std::cout << "SSE Improvements Vector Benchmark" << std::endl;
 
-  // Set up the camera
-  PerspectiveCamera camera;
-  camera.setFovAngle(90);
-  camera.setPosition(Vector3d(0,-3,10));
-  camera.setForwardDirection(normalized(Vector3d(0,0.6,-1)));
-  camera.setUpDirection(Vector3d(0,-1,0));
+  ProgressBar bar(70);
+  bar.start();
 
-  // Materials
-  MaterialShader * teapotMaterial = new MaterialShader(Color(1,0.6,0.6));
-  teapotMaterial->setReflectance(0.5);
-  scene.add(teapotMaterial);
-  LambertShader * stadiumMaterial = new LambertShader(Color(0.6,0.8,1));
-  scene.add(stadiumMaterial);
+  Vector3d vecA(100.5627283f, 20.212121221f, -32.43255667f);
+  Vector3d vecB(-132.3269f, 21213.323f, -43242.434f);
 
-  // Load the Teapot and the Stadium
-  ObjModel * teapot = new ObjModel(teapotMaterial);
-  teapot->loadObj("data/teapot.obj",
-                  Vector3d(1,1,1)*70, Vector3d(-0.5,-1,3),
-                  ObjModel::NORMALS, ObjModel::SMOOTH);
-  scene.add(teapot);
+  auto start_time = std::chrono::high_resolution_clock::now();
 
-  ObjModel * stadium = new ObjModel(stadiumMaterial);
-  stadium->loadObj("data/stadium.obj",
-                   Vector3d(1,1,1)*70, Vector3d(-0.5,-1,3),
-                   ObjModel::NORMALS, ObjModel::SMOOTH);
-  scene.add(stadium);
+  for (unsigned int a = 0; a <= 10000; a++) {
+      vecA = vecA *2;
+      vecB = vecB *2;
 
-  // Add some lights
-  scene.add(new DirectionalLight(normalized(Vector3d(0.25,1.75,-0.5)), 5.f));
-  scene.add(new AmbientLight(0.1));
-  scene.add(new PointLight(Vector3d(4,5,6), 40));
-  scene.add(new PointLight(Vector3d(-4,5,6), 20));
+      for (unsigned int b = 0; b <= 10000; b++) {
+          Vector3d cross = crossProduct(vecA, vecB);
+          float dot = dotProduct(vecA, vecB);
+          normalize(&vecA);
+          normalize(&vecB);
+          vecA -= (dot * cross);
+          vecB += (dot * cross);
+      }
 
-  // Render the scene
-  SimpleRenderer renderer;
-  SuperRenderer superRenderer;
-  superRenderer.setSuperSamplingFactor(4);
-  renderer.renderImage(scene, camera, 1920, 1080).save("result.ppm");
-  superRenderer.renderImage(scene, camera, 1920, 1080).save("superSampledResult.ppm");
+      bar.progress((float(a + 1) / 10000));
+  }
+
+  auto end_time = std::chrono::high_resolution_clock::now();
+  auto time = end_time - start_time;
+
+  bar.end();
+
+  std::cout << "CPU time: " << std::chrono::duration_cast<std::chrono::milliseconds>(time).count() << "ms" << std::endl;
 
   return 0;
 }
-

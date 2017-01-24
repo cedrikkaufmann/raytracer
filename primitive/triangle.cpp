@@ -60,7 +60,7 @@ Vector3d Triangle::normalFromRay(Ray const& ray) const {
      Vector3d const edge2 = this->vertex_[2] - this->vertex_[0];
      Vector3d const normal = normalized(crossProduct(edge1, edge2));
      // Make sure the normal works for both sides of the triangle
-     return (dotProduct(normal, ray.direction) < 0 ? normal : -normal);
+     return (dotProduct(normal, ray.direction) < 0 ? normal : (-1)*normal);
 }
 
 
@@ -75,4 +75,3 @@ float Triangle::maximumBounds(int dimension) const {
   return std::max(this->vertex_[0][dimension],
       std::max(this->vertex_[1][dimension], this->vertex_[2][dimension]));
 }
-

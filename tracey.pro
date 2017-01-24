@@ -2,7 +2,7 @@ CONFIG += console c++11
 
 TEMPLATE = app
 SOURCES += main.cpp \
-    renderer/superrenderer.cpp
+    ssebench.cpp
 
 
 
@@ -19,7 +19,6 @@ common/ray.h \
 common/texture.h \
 common/vector2d.h \
 common/vector3d.h \
-    renderer/superrenderer.h
 
 SOURCES +=\
 common/boundingbox.cpp \
@@ -28,7 +27,6 @@ common/kdtree.cpp \
 common/progressbar.cpp \
 common/texture.cpp \
 common/vector2d.cpp \
-common/vector3d.cpp \
 
 
 
@@ -91,6 +89,7 @@ renderer/desaturationrenderer.h \
 renderer/renderer.h \
 renderer/hazerenderer.h \
 renderer/simplerenderer.h \
+renderer/superrenderer.h \
 
 SOURCES +=\
 renderer/backgroundrenderer.cpp \
@@ -98,6 +97,7 @@ renderer/depthrenderer.cpp \
 renderer/desaturationrenderer.cpp \
 renderer/hazerenderer.cpp \
 renderer/simplerenderer.cpp \
+renderer/superrenderer.cpp \
 
 
 
@@ -135,4 +135,3 @@ shader/lambertshader.cpp \
 shader/mirrorshader.cpp \
 shader/refractionshader.cpp \
 shader/simpleshadowshader.cpp \
-

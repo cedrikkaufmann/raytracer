@@ -14,12 +14,12 @@ Color RefractionShader::shade(Ray * ray) const {
   float refractiveIndex = indexInside/indexOutside;
   // What if we are already inside the object?
   if (dotProduct(normalVector, ray->direction) > 0) {
-    normalVector = -normalVector;
+    normalVector = (-1)*normalVector;
     refractiveIndex = indexOutside/indexInside;
   }
 
   // Using the notation from the lecture
-  float cosineTheta = dotProduct(normalVector, -ray->direction);
+  float cosineTheta = dotProduct(normalVector, (-1)*ray->direction);
   float cosinePhi = std::sqrt(1 + refractiveIndex * refractiveIndex * (cosineTheta * cosineTheta - 1));
   // Calculate t, the new ray direction
   Vector3d t = refractiveIndex * ray->direction + (refractiveIndex * cosineTheta - cosinePhi) * normalVector;

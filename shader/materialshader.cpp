@@ -65,7 +65,7 @@ Color MaterialShader::shade(Ray * ray) const {
     Light::Illumination illum = lights.at(i)->illuminate(*ray);
 
     // Diffuse term (lambert)
-    Color const diffuseColor = std::max(dotProduct(-illum.direction,normal), 0.0f)
+    Color const diffuseColor = std::max(dotProduct((-1)*illum.direction,normal), 0.0f)
         * this->diffuseCoefficient*illum.color;
     if (!this->diffuseMap.isNull())
       fragmentColor += diffuseColor*this->diffuseMap.color(surfacePosition)*this->objectColor;
@@ -73,7 +73,7 @@ Color MaterialShader::shade(Ray * ray) const {
       fragmentColor += diffuseColor*this->objectColor;
 
     // Specular term
-    float const cosine = dotProduct(-illum.direction,reflection);
+    float const cosine = dotProduct((-1)*illum.direction,reflection);
     if (cosine > 0) {
       Color const specularColor = std::pow(cosine,shininessExponent)
           * this->specularCoefficient*illum.color;

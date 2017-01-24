@@ -16,7 +16,7 @@ Color LambertShader::shade(Ray * ray) const {
   for (unsigned int i = 0; i < lights.size(); ++i) {
     Light::Illumination const illum = lights.at(i)->illuminate(*ray);
     // Lambert formula
-    float const cosine = dotProduct(-illum.direction, normalVector);
+    float const cosine = dotProduct((-1)*illum.direction, normalVector);
     illuminationColor += std::max(cosine,0.0f)*illum.color;
   }
   return illuminationColor * this->objectColor;

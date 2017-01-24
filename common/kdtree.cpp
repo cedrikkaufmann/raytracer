@@ -75,7 +75,7 @@ KdTree::KdTree(std::vector<Primitive*> const& primitives,
                int minimumNumberOfPrimitives)
   : maximumDepth(maximumDepth),
     minimumNumberOfPrimitives(minimumNumberOfPrimitives),
-    bounds(Vector3d(1,1,1)*INFINITY, -Vector3d(1,1,1)*INFINITY) {
+    bounds(Vector3d(1,1,1)*INFINITY, Vector3d(1,1,1)*-INFINITY) {
 
   // Determine the bounding box of the entire kD-Tree
   for (unsigned int i = 0; i < primitives.size(); ++i) {

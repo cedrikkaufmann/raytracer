@@ -16,7 +16,7 @@ Color BrdfShader::shade(Ray * ray) const {
   Color illuminationColor;
 
   // Calculate theta and phi
-  float thetaIn = std::acos(dotProduct(-normalVector, ray->direction));
+  float thetaIn = std::acos(dotProduct((-1)*normalVector, ray->direction));
   float phiIn = 0.0f;
 
   std::vector<Light*> lights = this->parentScene_->lights();
@@ -25,7 +25,7 @@ Color BrdfShader::shade(Ray * ray) const {
     illum = lights.at(i)->illuminate(*ray);
 
     // Diffuse term
-    float const cosine = dotProduct(-illum.direction, normalVector);
+    float const cosine = dotProduct((-1)*illum.direction, normalVector);
     if (cosine > 0) {
       Color color;
 
@@ -34,11 +34,11 @@ Color BrdfShader::shade(Ray * ray) const {
         float const thetaOut = std::acos(cosine);
 
         // Derive local coordinate system
-        Vector3d const x = crossProduct(-ray->direction, normalVector);
+        Vector3d const x = crossProduct((-1)*ray->direction, normalVector);
         Vector3d const y = crossProduct(normalVector, x);
 
         // Project outgoing vector into local coordinate system
-        Vector3d const c = crossProduct(-illum.direction, normalVector);
+        Vector3d const c = crossProduct((-1)*illum.direction, normalVector);
         float const phiOut = std::atan2(dotProduct(c,y),dotProduct(c,x));
 
         color = Color(brdf->lookupBrdfValues(thetaIn, phiIn, thetaOut, phiOut));
