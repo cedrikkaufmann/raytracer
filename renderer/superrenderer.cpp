@@ -2,41 +2,48 @@
 #include "renderer/superrenderer.h"
 #include "scene/scene.h"
 #include "camera/camera.h"
-#include "common/progressbar.h"
 
 Texture SuperRenderer::renderImage(Scene const& scene,
-                                    Camera const& camera,
-                                    int width, int height) {
-  ProgressBar bar(70);
-  bar.start();
+                                Camera const& camera,
+                                int width, int height) {
 
+  // Super-hacky progress bar!
+  int k = 0;
+  printf("(SimpleRenderer): Begin rendering...\n");
+  printf("| 0%%");
+  int const barSize = 50;
+  int const stepSize = (width*height)/barSize;
+  for (int i = 0; i < barSize-3-5; ++i)
+    printf(" ");
+  printf("100%% |\n|");
+
+  // A few helpful constants
+  int const sampleCount = this->superSamplingFactor_*this->superSamplingFactor_;
+  float const samplingStep = 1.0f/this->superSamplingFactor_;
+
+  // The usual render loop
   Texture image(width, height);
-
   float const aspectRatio = static_cast<float>(height)/width;
   for (int x = 0; x < image.width(); ++x) {
     for (int y = 0; y < image.height(); ++y) {
-        float renderPosX = (static_cast<float>(x)/width*2-1);
-        float renderPosY =  (static_cast<float>(y)/height*2-1)*aspectRatio;
 
-        Color superSampledColor;
-
-        for (int a = 0; a < superSamplingFactor(); a++) {
-            for (int b = 0; b < superSamplingFactor(); b++) {
-                Ray ray = camera.castRay(renderPosX + a, renderPosY + b);
-                superSampledColor += clamped(scene.traceRay(&ray));
-            }
+      // The fragment color is averaged over all sub-pixel rays
+      Color fragmentColor;
+      for (int xs = 0; xs < this->superSamplingFactor_; ++xs) {
+        for (int ys = 0; ys < this->superSamplingFactor_; ++ys) {
+          Ray ray = camera.castRay(((xs*samplingStep + x)/width*2-1),
+                                   ((ys*samplingStep + y)/height*2-1)*aspectRatio);
+          fragmentColor += scene.traceRay(&ray);
         }
+      }
+      image.setPixelAt(x, y, clamped(fragmentColor/sampleCount));
 
-        superSampledColor = superSampledColor / (superSamplingFactor() * superSamplingFactor());
+      // Super hacky progress bar!
+      if (++k % stepSize == 0)
+        printf("=");
 
-        image.setPixelAt(x, y, superSampledColor);
     }
-
-    bar.progress((float)(x) / image.width());
   }
-
-  bar.end();
-  std::cout << "Rendering time: " << bar.progressTime << " sec." << std::endl;
-
+  printf("|\n");
   return image;
 }

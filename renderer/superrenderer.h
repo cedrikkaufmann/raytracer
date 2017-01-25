@@ -1,22 +1,20 @@
 #ifndef SUPERRENDERER_H
 #define SUPERRENDERER_H
 
-#define MULTIPLE_RAYS 5
-
 #include "renderer/renderer.h"
 
 class SuperRenderer : public Renderer {
 
 public:
   // Constructor / Destructor
-  SuperRenderer() : superSamplingFactor_(4) {}
+  SuperRenderer() {}
   virtual ~SuperRenderer() {}
 
   // Get
-  float superSamplingFactor() { return this->superSamplingFactor_; }
+  int superSamplingFactor() { return this->superSamplingFactor_; }
 
   // Set
-  void setSuperSamplingFactor(int const& factor) { this->superSamplingFactor_ = factor; }
+  void setSuperSamplingFactor(int factor) { this->superSamplingFactor_ = factor; }
 
   // Render functions
   virtual Texture renderImage(Scene const& scene,
@@ -25,7 +23,8 @@ public:
 
 
 private:
-  float superSamplingFactor_;
+  int superSamplingFactor_;
+
 };
 
-#endif // SUPERRENDERER_H
+#endif

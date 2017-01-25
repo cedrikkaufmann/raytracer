@@ -1,4 +1,6 @@
 #include "camera/perspectivecamera.h"
+#include "renderer/superrenderer.h"
+#include "renderer/simplerenderer.h"
 #include "scene/simplescene.h"
 
 #include "light/ambientlight.h"
@@ -8,11 +10,9 @@
 #include "primitive/objmodel.h"
 #include "primitive/sphere.h"
 
-#include "renderer/simplerenderer.h"
-#include "renderer/superrenderer.h"
-
 #include "shader/lambertshader.h"
 #include "shader/materialshader.h"
+
 
 int main() {
   // Set up the environment map scene
@@ -53,7 +53,8 @@ int main() {
   scene.add(new PointLight(Vector3d(-4,5,6), 20));
 
   // Render the scene
-  SimpleRenderer renderer;
+  SuperRenderer renderer;
+  renderer.setSuperSamplingFactor(4);
   renderer.renderImage(scene, camera, 1920, 1080).save("result.ppm");
 
   return 0;
