@@ -37,16 +37,16 @@ int main() {
   LambertShader * lambertBlue = new LambertShader(Color(0.6,0.8,1));
   LambertShader * lambertGreen = new LambertShader(Color(0.4,0.9,0.4));
   LambertShader * lambertYellow = new LambertShader(Color(1,0.9,0.1));
-  LambertShader * LambertBrown = new LambertShader(Color(0.8,0.4,0.3));
-
-  ToonShader * toon = new ToonShader();
+  LambertShader * lambertBrown = new LambertShader(Color(0.8,0.4,0.3));
+  ToonShader * toonBrown = new ToonShader(Color(0.8,0.4,0.3));
 
   scene.add(lambertWhite);
   scene.add(lambertRed);
   scene.add(lambertBlue);
   scene.add(lambertGreen);
   scene.add(lambertYellow);
-  scene.add(LambertBrown);
+  scene.add(lambertBrown);
+  scene.add(toonBrown);
 
 
   // Lets build a Cornell Box
@@ -55,7 +55,6 @@ int main() {
   scene.add(new InfinitePlane(Vector3d(0,+10,0),Vector3d(0,-1,0),lambertWhite));
   scene.add(new InfinitePlane(Vector3d(-10,0,0),Vector3d(+1,0,0),lambertRed));
   scene.add(new InfinitePlane(Vector3d(+10,0,0),Vector3d(-1,0,0),lambertBlue));
-
 
 
   // Add some lights
@@ -95,7 +94,7 @@ int main() {
 
 
   // Load the cow model
-  ObjModel * cow = new ObjModel(LambertBrown);
+  ObjModel * cow = new ObjModel(toonBrown);
   cow->loadObj("data/cow.obj",
                Vector3d(1,1,1)*60, Vector3d(0,-1,0),
                ObjModel::NONORMALS, ObjModel::STANDARD);
