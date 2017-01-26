@@ -38,7 +38,9 @@ int main() {
   LambertShader * lambertGreen = new LambertShader(Color(0.4,0.9,0.4));
   LambertShader * lambertYellow = new LambertShader(Color(1,0.9,0.1));
   LambertShader * lambertBrown = new LambertShader(Color(0.8,0.4,0.3));
-  ToonShader * toonBrown = new ToonShader(Color(0.8,0.4,0.3));
+
+  ToonShader * toonBlue = new ToonShader(6, 0.3f, 0.8f, 0.5f, 1, 0.8f, Color(0.6,0.8,1));
+  ToonShader * toonYellow = new ToonShader(6, 0.3f, 0.8f, 0.5f, 1, 0.8f, Color(1,0.9,0.1));
 
   scene.add(lambertWhite);
   scene.add(lambertRed);
@@ -46,7 +48,9 @@ int main() {
   scene.add(lambertGreen);
   scene.add(lambertYellow);
   scene.add(lambertBrown);
-  scene.add(toonBrown);
+
+  scene.add(toonBlue);
+  scene.add(toonYellow);
 
 
   // Lets build a Cornell Box
@@ -61,45 +65,22 @@ int main() {
   scene.add(new PointLight(Vector3d(0, 9, 0),50 ,Color(1,0.9,0.5)));
   // Once you have implemented the spotlight, uncomment this section
 
-  /*scene.add(new SpotLight(Vector3d(-4, 4, 10),      // Position
+  /*
+  scene.add(new SpotLight(Vector3d(-4, 4, 10),      // Position
                           Vector3d(0.3,-0.3,-0.9),  // Direction
                           15.0f,                    // Minimum alpha
                           30.0f,                    // Maximum alpha
                           450,                      // Intensity
                           Color(1,1,1)              // Color
                           )
-            );*/
+            );
+  */
 
   // Once you have implemented the ambientlight, use this line
-  scene.add(new AmbientLight(0.25f));
+  //scene.add(new AmbientLight(0.25f));
 
-  // Add a cone
-  /*Vector3d const top(4,2,0);
-  Vector3d const topNormal(0,1,0);
-  float const height = 5;
-  float const radius = 3;
-  int const tesselation = 16;
-  Vector3d const center(top.x, top.y - height, top.z);
-  for (int i = 0; i < tesselation; ++i) {
-    Vector3d const a(center.x + radius*std::cos(i*(2.0f*PI/tesselation)),
-                     center.y,
-                     center.z + radius*std::sin(i*(2.0f*PI/tesselation)));
-    Vector3d const b(center.x + radius*std::cos((i+1)*(2.0f*PI/tesselation)),
-                     center.y,
-                     center.z + radius*std::sin((i+1)*(2.0f*PI/tesselation)));
-    scene.add(new Triangle(top, a, b, lambertYellow));
-    // Once you have implemented the SmoothTriangle, use this line
-    scene.add(new SmoothTriangle(top, a, b, topNormal, normalized(a-center), normalized(b-center), lambertYellow));
-  }*/
-
-
-  // Load the cow model
-  ObjModel * cow = new ObjModel(toonBrown);
-  cow->loadObj("data/cow.obj",
-               Vector3d(1,1,1)*60, Vector3d(0,-1,0),
-               ObjModel::NONORMALS, ObjModel::STANDARD);
-  scene.add(cow);
-
+  scene.add(new Sphere(Vector3d(-2,0,-2), 3.3f, toonBlue));
+  scene.add(new Sphere(Vector3d(2,-2,-4), 3.3f, toonYellow));
 
   // Set up the renderer...
   SimpleRenderer renderer;
