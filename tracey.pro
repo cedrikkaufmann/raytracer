@@ -2,6 +2,7 @@ CONFIG += console c++11
 
 TEMPLATE = app
 SOURCES += main.cpp \
+    shader/toonshader.cpp
 
 
 ###  COMMON  ###################################################################
@@ -17,6 +18,7 @@ common/ray.h \
 common/texture.h \
 common/vector2d.h \
 common/vector3d.h \
+    shader/toonshader.h
 
 SOURCES +=\
 common/boundingbox.cpp \
