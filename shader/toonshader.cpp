@@ -25,7 +25,7 @@ Color ToonShader::shade(Ray * ray) const {
 
     if ( std::abs(dotProduct(ray->direction, normalVector)) < edgeThreshold ) {
         // edge detected
-        illuminationColor = Color(0,0,0);
+        return Color(0,0,0);
     } else {
         float scaleFactor = 1.0f / colorLevels;
         Color illumColor(0.8f, 0.8f, 0.8f);
@@ -40,7 +40,7 @@ Color ToonShader::shade(Ray * ray) const {
             // Diffuse term.
             float const diffuse = std::max(dotProduct((-1)*illum.direction, normalVector),0.0f);
             Color const diffuseColor = floor(diffuse * colorLevels) * scaleFactor * diffuseCoefficient * illum.color;
-            illuminationColor = illuminationColor + diffuseColor;
+            illuminationColor += diffuseColor;
 
             // Specular term (based on reflection vector).
             Vector3d const& reflectionVector = ray->direction - 2*dotProduct(normalVector,ray->direction)*normalVector;
@@ -52,13 +52,11 @@ Color ToonShader::shade(Ray * ray) const {
                     Color specularColor = specularCoefficient*Color(1, 1, 1)  // white highlight
                             * specular // shininess factor
                             * illum.color;
-                    illuminationColor = illuminationColor + specularColor;
+                    illuminationColor += specularColor;
                 }
             }
         }
 
-        return illuminationColor + this->objectColor;
+        return (illuminationColor + this->objectColor);
     }
-
-    return illuminationColor;
 }

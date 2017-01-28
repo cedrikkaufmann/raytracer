@@ -2,7 +2,6 @@ CONFIG += console c++11
 
 TEMPLATE = app
 SOURCES += main.cpp \
-    shader/toonshader.cpp
 
 
 ###  COMMON  ###################################################################
@@ -18,7 +17,6 @@ common/ray.h \
 common/texture.h \
 common/vector2d.h \
 common/vector3d.h \
-    shader/toonshader.h
 
 SOURCES +=\
 common/boundingbox.cpp \
@@ -124,6 +122,8 @@ shader/lambertshader.h \
 shader/mirrorshader.h \
 shader/refractionshader.h \
 shader/simpleshadowshader.h \
+shader/toonshader.h \
+
 
 SOURCES +=\
 shader/brdfshader.cpp \
@@ -134,3 +134,4 @@ shader/lambertshader.cpp \
 shader/mirrorshader.cpp \
 shader/refractionshader.cpp \
 shader/simpleshadowshader.cpp \
+shader/toonshader.cpp \

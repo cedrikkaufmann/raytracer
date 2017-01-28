@@ -93,5 +93,7 @@ inline float dotProduct(Vector3d const& left, Vector3d const& right) { return _m
 inline float length(Vector3d const& v) { return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(v.mmvalue, v.mmvalue, 0x71))); }
 inline Vector3d normalized(Vector3d const& v) { return _mm_mul_ps(v.mmvalue, _mm_rsqrt_ps(_mm_dp_ps(v.mmvalue, v.mmvalue, 0x7F))); }
 inline void normalize(Vector3d * v) { *v = normalized(*v); }
+inline Vector3d minimum(Vector3d const& left, Vector3d const& right) { return _mm_min_ps(left.mmvalue, right.mmvalue); }
+inline Vector3d maximum(Vector3d const& left, Vector3d const& right) { return _mm_max_ps(left.mmvalue, right.mmvalue); }
 
 #endif
