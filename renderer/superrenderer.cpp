@@ -27,13 +27,14 @@ Texture SuperRenderer::renderImage(Scene const& scene,
   Texture image(width, height);
   float const aspectRatio = static_cast<float>(height)/width;
   for (int x = 0; x < image.width(); ++x) {
+
+    // Peform for-statement on seperate threads
+    #pragma omp parallel for
     for (int y = 0; y < image.height(); ++y) {
       // The fragment color is averaged over all sub-pixel rays
       Color fragmentColor;
       for (int xs = 0; xs < this->superSamplingFactor_; ++xs) {
 
-        // Peform for-statement on seperate threads
-        #pragma omp parallel for
         for (int ys = 0; ys < this->superSamplingFactor_; ++ys) {
           Ray ray = camera.castRay(((xs*samplingStep + x)/width*2-1),
                                    ((ys*samplingStep + y)/height*2-1)*aspectRatio);
