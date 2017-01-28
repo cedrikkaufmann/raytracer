@@ -1,5 +1,7 @@
 #include "progressbar.h"
 
+#include <iostream>
+
 void ProgressBar::progress(float progress) {
     std::cout << "[";
     int pos = barWidth * progress;
@@ -13,11 +15,10 @@ void ProgressBar::progress(float progress) {
 }
 
 void ProgressBar::start() {
-    startTime = clock();
+    progress(0);
 }
 
 void ProgressBar::end() {
-    progressTime = (clock() - startTime) / CLOCKS_PER_SEC;
     progress(1.0f);
     std::cout << std::endl;
 }

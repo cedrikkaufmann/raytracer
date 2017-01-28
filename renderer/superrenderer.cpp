@@ -1,21 +1,23 @@
-#include <cstdio>
 #include "renderer/superrenderer.h"
 #include "scene/scene.h"
 #include "camera/camera.h"
+#include "common/progressbar.h"
+#include "common/benchmark.h"
+
+#include <iostream>
+#include <omp.h>
 
 Texture SuperRenderer::renderImage(Scene const& scene,
                                 Camera const& camera,
                                 int width, int height) {
+  std::cout << "(SuperRenderer): Rendering..." << std::endl;
 
-  // Super-hacky progress bar!
-  int k = 0;
-  printf("(SimpleRenderer): Begin rendering...\n");
-  printf("| 0%%");
-  int const barSize = 50;
-  int const stepSize = (width*height)/barSize;
-  for (int i = 0; i < barSize-3-5; ++i)
-    printf(" ");
-  printf("100%% |\n|");
+  // Setup timer and progressbar
+  ProgressBar bar(70);
+  bar.start();
+
+  Timer timer;
+  timer.start();
 
   // A few helpful constants
   int const sampleCount = this->superSamplingFactor_*this->superSamplingFactor_;
@@ -26,10 +28,12 @@ Texture SuperRenderer::renderImage(Scene const& scene,
   float const aspectRatio = static_cast<float>(height)/width;
   for (int x = 0; x < image.width(); ++x) {
     for (int y = 0; y < image.height(); ++y) {
-
       // The fragment color is averaged over all sub-pixel rays
       Color fragmentColor;
       for (int xs = 0; xs < this->superSamplingFactor_; ++xs) {
+
+        // Peform for-statement on seperate threads
+        #pragma omp parallel for
         for (int ys = 0; ys < this->superSamplingFactor_; ++ys) {
           Ray ray = camera.castRay(((xs*samplingStep + x)/width*2-1),
                                    ((ys*samplingStep + y)/height*2-1)*aspectRatio);
@@ -37,13 +41,15 @@ Texture SuperRenderer::renderImage(Scene const& scene,
         }
       }
       image.setPixelAt(x, y, clamped(fragmentColor/sampleCount));
-
-      // Super hacky progress bar!
-      if (++k % stepSize == 0)
-        printf("=");
-
     }
+
+    bar.progress((float)(x) / width);
   }
-  printf("|\n");
+
+  // Stop timer and progressbar
+  timer.end();
+  bar.end();
+  std::cout << "(SuperRenderer): Rendering time: " << timer.getMilliseconds().count() << " milliseconds." << std::endl;
+
   return image;
 }

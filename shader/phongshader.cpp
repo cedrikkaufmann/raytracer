@@ -24,7 +24,7 @@ Color PhongShader::shade(Ray * ray) const {
         // Diffuse term.
         Color const diffuseColor = std::max(dotProduct((-1)*illum.direction, normalVector),0.0f)
                 * diffuseCoefficient* illum.color;
-        illuminationColor = illuminationColor + diffuseColor;
+        illuminationColor += diffuseColor;
 
         // Specular term (based on reflection vector).
         Vector3d const& reflectionVector = ray->direction - 2*dotProduct(normalVector,ray->direction)*normalVector;
@@ -33,7 +33,7 @@ Color PhongShader::shade(Ray * ray) const {
             Color specularColor = specularCoefficient*Color(1, 1, 1)  // white highlight
                     * powf(cosine, shininessExponent) // shininess factor
                     * illum.color;
-            illuminationColor = illuminationColor + specularColor;
+            illuminationColor += specularColor;
         }
     }
     return illuminationColor * this->objectColor;

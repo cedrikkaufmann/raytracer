@@ -135,12 +135,19 @@ bool ObjModel::loadObj(char const* fileName,
 
     // Determine minBounds and maxBounds
     for (unsigned int k = 0; k < 3; ++k) {
+      // vectorized sse version
+      this->minBounds = minimum(this->minBounds, triangleData[k].vertex);
+      this->maxBounds = maximum(this->maxBounds, triangleData[k].vertex);
+
+      /*
+      // deprecated version
       this->minBounds.x = std::min(this->minBounds.x, triangleData[k].vertex.x);
       this->minBounds.y = std::min(this->minBounds.y, triangleData[k].vertex.y);
       this->minBounds.z = std::min(this->minBounds.z, triangleData[k].vertex.z);
       this->maxBounds.x = std::max(this->maxBounds.x, triangleData[k].vertex.x);
       this->maxBounds.y = std::max(this->maxBounds.y, triangleData[k].vertex.y);
       this->maxBounds.z = std::max(this->maxBounds.z, triangleData[k].vertex.z);
+      */
     }
 
     // Add the primitives

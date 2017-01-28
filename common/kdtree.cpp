@@ -77,10 +77,20 @@ KdTree::KdTree(std::vector<Primitive*> const& primitives,
 
   // Adjust the bounding box of the entire kD-Tree
   for (unsigned int i = 0; i < primitives.size(); ++i) {
+    BoundingBox const primitiveBox = primitives[i]->boundingBox();
+
+    // vectorized sse version
+    this->bounds.minimumCorner = minimum(this->bounds.minimumCorner, primitiveBox.minimumCorner);
+    this->bounds.maximumCorner = maximum(this->bounds.maximumCorner, primitiveBox.maximumCorner);
+
+    /*
+    // deprecated version
     for (int d = 0; d < 3; ++d) {
       this->bounds.minimumCorner[d] = std::min(this->bounds.minimumCorner[d], primitives[i]->minimumBounds(d));
       this->bounds.maximumCorner[d] = std::max(this->bounds.maximumCorner[d], primitives[i]->maximumBounds(d));
     }
+    */
+
   }
 
   // Recursively build the kD-Tree
