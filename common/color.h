@@ -15,13 +15,13 @@ class Color
   inline Color(float r, float g, float b) : mmvalue(_mm_set_ps(0, b, g, r)) {}
   inline Color(__m128 m) : mmvalue(m) {}
 
-  // arithmetic operators with Vector3d
+  // arithmetic operators with Color
   inline Color operator+(const Color& c) const { return _mm_add_ps(mmvalue, c.mmvalue); }
   inline Color operator-(const Color& c) const { return _mm_sub_ps(mmvalue, c.mmvalue); }
   inline Color operator*(const Color& c) const { return _mm_mul_ps(mmvalue, c.mmvalue); }
   inline Color operator/(const Color& c) const { return _mm_div_ps(mmvalue, c.mmvalue); }
 
-  // op= operators
+  // assignment operators with Color
   inline Color& operator+=(const Color& c) { mmvalue = _mm_add_ps(mmvalue, c.mmvalue); return *this; }
   inline Color& operator-=(const Color& c) { mmvalue = _mm_sub_ps(mmvalue, c.mmvalue); return *this; }
   inline Color& operator*=(const Color& c) { mmvalue = _mm_mul_ps(mmvalue, c.mmvalue); return *this; }
@@ -33,7 +33,7 @@ class Color
   inline Color operator*(float c) const { return _mm_mul_ps(mmvalue, _mm_set1_ps(c)); }
   inline Color operator/(float c) const { return _mm_div_ps(mmvalue, _mm_set1_ps(c)); }
 
-  // op= operators with float
+  // assignment operators with float
   inline Color& operator+=(float v) { mmvalue = _mm_add_ps(mmvalue, _mm_set1_ps(v)); return *this; }
   inline Color& operator-=(float v) { mmvalue = _mm_sub_ps(mmvalue, _mm_set1_ps(v)); return *this; }
   inline Color& operator*=(float v) { mmvalue = _mm_mul_ps(mmvalue, _mm_set1_ps(v)); return *this; }
@@ -72,7 +72,6 @@ class Color
 };
 
 // Comparison operators ////////////////////////////////////////////////////////
-
 inline bool operator==(Color const& left, Color const& right) { return _mm_test_all_ones(_mm_cmpeq_epi8(left.mmvalue, right.mmvalue)); }
 inline bool operator!=(Color const& left, Color const& right) { return !(left == right); }
 

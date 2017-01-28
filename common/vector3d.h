@@ -21,7 +21,7 @@ class Vector3d
   inline Vector3d operator*(const Vector3d& v) const { return _mm_mul_ps(mmvalue, v.mmvalue); }
   inline Vector3d operator/(const Vector3d& v) const { return _mm_div_ps(mmvalue, v.mmvalue); }
 
-  // op= operators
+  // assignment operators with Vector3d
   inline Vector3d& operator+=(const Vector3d& v) { mmvalue = _mm_add_ps(mmvalue, v.mmvalue); return *this; }
   inline Vector3d& operator-=(const Vector3d& v) { mmvalue = _mm_sub_ps(mmvalue, v.mmvalue); return *this; }
   inline Vector3d& operator*=(const Vector3d& v) { mmvalue = _mm_mul_ps(mmvalue, v.mmvalue); return *this; }
@@ -33,7 +33,7 @@ class Vector3d
   inline Vector3d operator*(float v) const { return _mm_mul_ps(mmvalue, _mm_set1_ps(v)); }
   inline Vector3d operator/(float v) const { return _mm_div_ps(mmvalue, _mm_set1_ps(v)); }
 
-  // op= operators with float
+  // assignment operators with float
   inline Vector3d& operator+=(float v) { mmvalue = _mm_add_ps(mmvalue, _mm_set1_ps(v)); return *this; }
   inline Vector3d& operator-=(float v) { mmvalue = _mm_sub_ps(mmvalue, _mm_set1_ps(v)); return *this; }
   inline Vector3d& operator*=(float v) { mmvalue = _mm_mul_ps(mmvalue, _mm_set1_ps(v)); return *this; }
@@ -70,7 +70,6 @@ class Vector3d
 };
 
 // Comparison operators ////////////////////////////////////////////////////////
-
 inline bool operator==(Vector3d const& left, Vector3d const& right) { return _mm_test_all_ones(_mm_cmpeq_epi8(left.mmvalue, right.mmvalue)); }
 inline bool operator!=(Vector3d const& left, Vector3d const& right) { return !(left == right); }
 

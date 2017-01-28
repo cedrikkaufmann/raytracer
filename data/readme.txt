@@ -1,1 +1,0 @@
-Space Frigate 6 model: http://www.turbosquid.com/Search/Artists/Angryfly by Angryfly
