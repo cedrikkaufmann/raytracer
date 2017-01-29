@@ -70,7 +70,7 @@ class Vector3d
 };
 
 // Comparison operators ////////////////////////////////////////////////////////
-inline bool operator==(Vector3d const& left, Vector3d const& right) { return _mm_test_all_ones(_mm_cmpeq_epi8(left.mmvalue, right.mmvalue)); }
+inline bool operator==(Vector3d const& left, Vector3d const& right) { return _mm_test_all_ones(_mm_cmpeq_epi32(left.mmvalue, right.mmvalue)); }
 inline bool operator!=(Vector3d const& left, Vector3d const& right) { return !(left == right); }
 
 // Arithmethic operators float with Vector3d

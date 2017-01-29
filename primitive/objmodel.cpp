@@ -83,7 +83,7 @@ bool ObjModel::loadObj(char const* fileName,
         break;
 
       case NORMALS:
-        sscanf(line, "f %d/%d %d/%d %d/%d",
+        sscanf(line, "f %d//%d %d//%d %d//%d",
                &v.indexA, &vn.indexA,
                &v.indexB, &vn.indexB,
                &v.indexC, &vn.indexC);

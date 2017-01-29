@@ -1,6 +1,8 @@
 #include "camera/perspectivecamera.h"
+#include "camera/omnidirectionalcamera.h"
 #include "renderer/simplerenderer.h"
 #include "renderer/depthoffieldrenderer.h"
+#include "renderer/backgroundrenderer.h"
 #include "scene/simplescene.h"
 
 #include "light/ambientlight.h"
@@ -16,6 +18,7 @@
 
 #include "shader/lambertshader.h"
 #include "shader/toonshader.h"
+#include "shader/phongshader.h"
 
 #include <iostream>
 #include <omp.h>
@@ -64,17 +67,13 @@ int main() {
                    ObjModel::TEXTURENORMALS, ObjModel::SMOOTH);
   scene.add(terrain);
 
-  // Image size
-  int const imageWidth = 500;
-  int const imageHeight = 500;
-
   // Set up the renderer...
   DepthOfFieldRenderer renderer;
   renderer.setApertureRadius(2.8f);
-  renderer.setApertureRays(10);
+  renderer.setApertureRays(50);
   renderer.setFocalDistance(40);
   // ... and render an image
-  renderer.renderImage(scene, camera, imageWidth, imageHeight).save("result.ppm");
+  renderer.renderImage(scene, camera, 2000, 2000).save("result.ppm");
 
   return 0;
 }

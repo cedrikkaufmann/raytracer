@@ -68,7 +68,7 @@ class Vector2d
 };
 
 // Comparison operators ////////////////////////////////////////////////////////
-inline bool operator==(Vector2d const& left, Vector2d const& right) { return _mm_test_all_ones(_mm_cmpeq_epi8(left.mmvalue, right.mmvalue)); }
+inline bool operator==(Vector2d const& left, Vector2d const& right) { return _mm_test_all_ones(_mm_cmpeq_epi32(left.mmvalue, right.mmvalue)); }
 inline bool operator!=(Vector2d const& left, Vector2d const& right) { return !(left == right); }
 
 // Arithmethic operators float with Vector3d

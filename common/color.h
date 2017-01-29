@@ -72,7 +72,7 @@ class Color
 };
 
 // Comparison operators ////////////////////////////////////////////////////////
-inline bool operator==(Color const& left, Color const& right) { return _mm_test_all_ones(_mm_cmpeq_epi8(left.mmvalue, right.mmvalue)); }
+inline bool operator==(Color const& left, Color const& right) { return _mm_test_all_ones(_mm_cmpeq_epi32(left.mmvalue, right.mmvalue)); }
 inline bool operator!=(Color const& left, Color const& right) { return !(left == right); }
 
 // Arithmethic operators float with Color
