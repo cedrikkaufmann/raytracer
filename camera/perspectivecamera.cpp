@@ -1,4 +1,5 @@
 #include "camera/perspectivecamera.h"
+#include <iostream>
 
 PerspectiveCamera::PerspectiveCamera()
   : forwardDirection_(0,0,-1), upDirection_(0,1,0), fovAngle_(70) {}
