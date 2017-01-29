@@ -54,7 +54,6 @@ Texture DepthOfFieldRenderer::renderImage(Scene const& scene,
       // Aperture color buffer
       Color apertureColor;
 
-      #pragma omp parallel for
       for (unsigned i = 0; i < this->apertureRays_; i++) {
         // prepare ray using jittered random origin simulating the aperture
         Ray apertureRay = ray;
