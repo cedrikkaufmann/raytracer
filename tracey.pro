@@ -1,4 +1,10 @@
 CONFIG += console c++11
+CONFIG -= app_bundle
+
+INCLUDEPATH += /usr/local/opt/llvm/include
+QMAKE_CXX = /usr/local/Cellar/llvm/3.9.1/bin/clang++
+QMAKE_LFLAGS += /usr/local/opt/llvm/lib/libiomp5.dylib
+QMAKE_CXXFLAGS += -march=native -fopenmp -O3 -pipe
 
 TEMPLATE = app
 SOURCES += main.cpp \
@@ -20,7 +26,6 @@ common/vector3d.h \
 
 SOURCES +=\
 common/boundingbox.cpp \
-common/color.cpp\
 common/kdtree.cpp \
 common/progressbar.cpp \
 common/texture.cpp \
@@ -87,6 +92,7 @@ renderer/renderer.h \
 renderer/hazerenderer.h \
 renderer/simplerenderer.h \
 renderer/superrenderer.h \
+renderer/depthoffieldrenderer.h \
 
 SOURCES +=\
 renderer/backgroundrenderer.cpp \
@@ -95,6 +101,7 @@ renderer/desaturationrenderer.cpp \
 renderer/hazerenderer.cpp \
 renderer/simplerenderer.cpp \
 renderer/superrenderer.cpp \
+renderer/depthoffieldrenderer.cpp \
 
 
 

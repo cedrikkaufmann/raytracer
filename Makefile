@@ -1,6 +1,6 @@
 CC=/usr/local/Cellar/llvm/3.9.1/bin/clang++ -std=c++11 -fopenmp -march=native -O3 -pipe
-CFLAGS=-I. -I.. -I/usr/local/opt/llvm/include
-LDFLAGS=-L/usr/local/opt/llvm/lib
+CFLAGS=-I. -I.. -I/usr/local/opt/llvm/include -I/Users/cedrik/Qt/5.8/clang_64/include
+LDFLAGS=-L/usr/local/opt/llvm/lib -L/Users/cedrik/Qt/5.8/clang_64/lib
 EXE=tracey
 
 $(EXE): main.o progressbar.o perspectivecamera.o omnidirectionalcamera.o boundingbox.o kdtree.o texture.o spotlight.o ambientlight.o directionallight.o pointlight.o infiniteplane.o sphere.o triangle.o smoothtriangle.o texturedtriangle.o objmodel.o depthoffieldrenderer.o superrenderer.o simplerenderer.o backgroundrenderer.o depthrenderer.o desaturationrenderer.o hazerenderer.o scene.o simplescene.o toonshader.o flatshader.o lambertshader.o mirrorshader.o refractionshader.o simpleshadowshader.o materialshader.o brdfshader.o phongshader.o

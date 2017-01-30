@@ -28,7 +28,6 @@ Color ToonShader::shade(Ray * ray) const {
         return Color(0,0,0);
     } else {
         float scaleFactor = 1.0f / colorLevels;
-        Color illumColor(0.8f, 0.8f, 0.8f);
 
         // Compute illumination
         std::vector<Light*> lights = this->parentScene_->lights();

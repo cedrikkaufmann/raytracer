@@ -11,7 +11,7 @@
 
 
 Vector3d unitCircleRandom(float radius) {
-  Vector2d randomVec(
+    Vector2d randomVec(
     2*PI*((float)rand() / RAND_MAX),
     std::sqrt((float)rand() / RAND_MAX)
   );
