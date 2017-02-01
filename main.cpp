@@ -112,12 +112,12 @@ int main() {
 
   // Set up the renderer...
   DepthOfFieldRenderer renderer;
-  renderer.setApertureRadius(0.7f);
-  renderer.setApertureRays(25);
+  renderer.setApertureRadius(1.2f);
+  renderer.setApertureRays(100);
   renderer.setFocalDistance(100);
 
   // ... and render an image
-  renderer.renderImage(scene, camera, 500, 500).save("result.ppm");
+  renderer.renderImage(scene, camera, 1000, 1000).save("result.png");
 
   return 0;
 }

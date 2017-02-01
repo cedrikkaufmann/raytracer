@@ -28,16 +28,16 @@ class Vector3d
   inline Vector3d& operator/=(const Vector3d& v) { mmvalue = _mm_div_ps(mmvalue, v.mmvalue); return *this; }
 
   // arithmetic operators with float
-  inline Vector3d operator+(float v) const { return _mm_add_ps(mmvalue, _mm_set1_ps(v)); }
-  inline Vector3d operator-(float v) const { return _mm_sub_ps(mmvalue, _mm_set1_ps(v)); }
-  inline Vector3d operator*(float v) const { return _mm_mul_ps(mmvalue, _mm_set1_ps(v)); }
-  inline Vector3d operator/(float v) const { return _mm_div_ps(mmvalue, _mm_set1_ps(v)); }
+  inline Vector3d operator+(float v) const { return _mm_add_ps(mmvalue, _mm_set_ps(0,v,v,v)); }
+  inline Vector3d operator-(float v) const { return _mm_sub_ps(mmvalue, _mm_set_ps(0,v,v,v)); }
+  inline Vector3d operator*(float v) const { return _mm_mul_ps(mmvalue, _mm_set_ps(0,v,v,v)); }
+  inline Vector3d operator/(float v) const { return _mm_div_ps(mmvalue, _mm_set_ps(0,v,v,v)); }
 
   // assignment operators with float
-  inline Vector3d& operator+=(float v) { mmvalue = _mm_add_ps(mmvalue, _mm_set1_ps(v)); return *this; }
-  inline Vector3d& operator-=(float v) { mmvalue = _mm_sub_ps(mmvalue, _mm_set1_ps(v)); return *this; }
-  inline Vector3d& operator*=(float v) { mmvalue = _mm_mul_ps(mmvalue, _mm_set1_ps(v)); return *this; }
-  inline Vector3d& operator/=(float v) { mmvalue = _mm_div_ps(mmvalue, _mm_set1_ps(v)); return *this; }
+  inline Vector3d& operator+=(float v) { mmvalue = _mm_add_ps(mmvalue, _mm_set_ps(0,v,v,v)); return *this; }
+  inline Vector3d& operator-=(float v) { mmvalue = _mm_sub_ps(mmvalue, _mm_set_ps(0,v,v,v)); return *this; }
+  inline Vector3d& operator*=(float v) { mmvalue = _mm_mul_ps(mmvalue, _mm_set_ps(0,v,v,v)); return *this; }
+  inline Vector3d& operator/=(float v) { mmvalue = _mm_div_ps(mmvalue, _mm_set_ps(0,v,v,v)); return *this; }
 
   // Access operators
   float & operator[](int const dimension) {
@@ -70,9 +70,7 @@ class Vector3d
 };
 
 // Comparison operators ////////////////////////////////////////////////////////
-inline bool operator==(Vector3d const& left, Vector3d const& right) {
-    return _mm_test_all_ones(_mm_cmpeq_epi32(_mm_set_ps(0, left.z, left.y, left.x), _mm_set_ps(0, right.z, right.y, right.x)));
-}
+inline bool operator==(Vector3d const& left, Vector3d const& right) { return _mm_test_all_ones(_mm_cmpeq_epi32(left.mmvalue, right.mmvalue)); }
 inline bool operator!=(Vector3d const& left, Vector3d const& right) { return !(left == right); }
 
 // Arithmethic operators float with Vector3d

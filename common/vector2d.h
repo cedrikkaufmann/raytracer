@@ -16,28 +16,28 @@ class Vector2d
   inline Vector2d(__m128 m) : mmvalue(m) {}
 
   // arithmetic operators with Vector2d
-  inline Vector2d operator+(const Vector2d& m) const { return _mm_add_ps(mmvalue, m.mmvalue); }
-  inline Vector2d operator-(const Vector2d& m) const { return _mm_sub_ps(mmvalue, m.mmvalue); }
-  inline Vector2d operator*(const Vector2d& m) const { return _mm_mul_ps(mmvalue, m.mmvalue); }
-  inline Vector2d operator/(const Vector2d& m) const { return _mm_div_ps(mmvalue, m.mmvalue); }
+  inline Vector2d operator+(const Vector2d& v) const { return _mm_add_ps(mmvalue, v.mmvalue); }
+  inline Vector2d operator-(const Vector2d& v) const { return _mm_sub_ps(mmvalue, v.mmvalue); }
+  inline Vector2d operator*(const Vector2d& v) const { return _mm_mul_ps(mmvalue, v.mmvalue); }
+  inline Vector2d operator/(const Vector2d& v) const { return _mm_div_ps(mmvalue, v.mmvalue); }
 
   // assigment operators with Vector2d
-  inline Vector2d& operator+=(const Vector2d& m) { mmvalue = _mm_add_ps(mmvalue, m.mmvalue); return *this; }
-  inline Vector2d& operator-=(const Vector2d& m) { mmvalue = _mm_sub_ps(mmvalue, m.mmvalue); return *this; }
-  inline Vector2d& operator*=(const Vector2d& m) { mmvalue = _mm_mul_ps(mmvalue, m.mmvalue); return *this; }
-  inline Vector2d& operator/=(const Vector2d& m) { mmvalue = _mm_div_ps(mmvalue, m.mmvalue); return *this; }
+  inline Vector2d& operator+=(const Vector2d& v) { mmvalue = _mm_add_ps(mmvalue, v.mmvalue); return *this; }
+  inline Vector2d& operator-=(const Vector2d& v) { mmvalue = _mm_sub_ps(mmvalue, v.mmvalue); return *this; }
+  inline Vector2d& operator*=(const Vector2d& v) { mmvalue = _mm_mul_ps(mmvalue, v.mmvalue); return *this; }
+  inline Vector2d& operator/=(const Vector2d& v) { mmvalue = _mm_div_ps(mmvalue, v.mmvalue); return *this; }
 
   // arithmetic operators with float
-  inline Vector2d operator+(float m) const { return _mm_add_ps(mmvalue, _mm_set1_ps(m)); }
-  inline Vector2d operator-(float m) const { return _mm_sub_ps(mmvalue, _mm_set1_ps(m)); }
-  inline Vector2d operator*(float m) const { return _mm_mul_ps(mmvalue, _mm_set1_ps(m)); }
-  inline Vector2d operator/(float m) const { return _mm_div_ps(mmvalue, _mm_set1_ps(m)); }
+  inline Vector2d operator+(float v) const { return _mm_add_ps(mmvalue, _mm_set_ps(0,0,v,v)); }
+  inline Vector2d operator-(float v) const { return _mm_sub_ps(mmvalue, _mm_set_ps(0,0,v,v)); }
+  inline Vector2d operator*(float v) const { return _mm_mul_ps(mmvalue, _mm_set_ps(0,0,v,v)); }
+  inline Vector2d operator/(float v) const { return _mm_div_ps(mmvalue, _mm_set_ps(0,0,v,v)); }
 
   // assignment operators with float
-  inline Vector2d& operator+=(float m) { mmvalue = _mm_add_ps(mmvalue, _mm_set1_ps(m)); return *this; }
-  inline Vector2d& operator-=(float m) { mmvalue = _mm_sub_ps(mmvalue, _mm_set1_ps(m)); return *this; }
-  inline Vector2d& operator*=(float m) { mmvalue = _mm_mul_ps(mmvalue, _mm_set1_ps(m)); return *this; }
-  inline Vector2d& operator/=(float m) { mmvalue = _mm_div_ps(mmvalue, _mm_set1_ps(m)); return *this; }
+  inline Vector2d& operator+=(float v) { mmvalue = _mm_add_ps(mmvalue, _mm_set_ps(0,0,v,v)); return *this; }
+  inline Vector2d& operator-=(float v) { mmvalue = _mm_sub_ps(mmvalue, _mm_set_ps(0,0,v,v)); return *this; }
+  inline Vector2d& operator*=(float v) { mmvalue = _mm_mul_ps(mmvalue, _mm_set_ps(0,0,v,v)); return *this; }
+  inline Vector2d& operator/=(float v) { mmvalue = _mm_div_ps(mmvalue, _mm_set_ps(0,0,v,v)); return *this; }
 
   // Access operators
   float & operator[](int dimension) {
@@ -68,9 +68,7 @@ class Vector2d
 };
 
 // Comparison operators ////////////////////////////////////////////////////////
-inline bool operator==(Vector2d const& left, Vector2d const& right) {
-    return _mm_test_all_ones(_mm_cmpeq_epi32(_mm_set_ps(0, 0, left.v, left.u), _mm_set_ps(0, 0, right.v, right.u)));
-}
+inline bool operator==(Vector2d const& left, Vector2d const& right) { return _mm_test_all_ones(_mm_cmpeq_epi32(left.mmvalue, right.mmvalue)); }
 inline bool operator!=(Vector2d const& left, Vector2d const& right) { return !(left == right); }
 
 // Arithmethic operators float with Vector3d
