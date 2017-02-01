@@ -2,9 +2,12 @@ CONFIG += console c++11
 CONFIG -= app_bundle
 
 INCLUDEPATH += /usr/local/opt/llvm/include
+
 QMAKE_CXX = /usr/local/Cellar/llvm/3.9.1/bin/clang++
+QMAKE_CXXFLAGS += -march=native -O3
+QMAKE_CXXFLAGS += -fopenmp
+
 QMAKE_LFLAGS += /usr/local/opt/llvm/lib/libiomp5.dylib
-QMAKE_CXXFLAGS += -march=native -fopenmp -O3 -pipe
 
 TEMPLATE = app
 SOURCES += main.cpp \

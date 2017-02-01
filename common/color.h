@@ -28,10 +28,10 @@ class Color
   inline Color& operator/=(const Color& c) { mmvalue = _mm_div_ps(mmvalue, c.mmvalue); return *this; }
 
   // arithmetic operators with float
-  inline Color operator+(float c) const { return _mm_add_ps(mmvalue, _mm_set1_ps(c)); }
-  inline Color operator-(float c) const { return _mm_sub_ps(mmvalue, _mm_set1_ps(c)); }
-  inline Color operator*(float c) const { return _mm_mul_ps(mmvalue, _mm_set1_ps(c)); }
-  inline Color operator/(float c) const { return _mm_div_ps(mmvalue, _mm_set1_ps(c)); }
+  inline Color operator+(float v) const { return _mm_add_ps(mmvalue, _mm_set1_ps(v)); }
+  inline Color operator-(float v) const { return _mm_sub_ps(mmvalue, _mm_set1_ps(v)); }
+  inline Color operator*(float v) const { return _mm_mul_ps(mmvalue, _mm_set1_ps(v)); }
+  inline Color operator/(float v) const { return _mm_div_ps(mmvalue, _mm_set1_ps(v)); }
 
   // assignment operators with float
   inline Color& operator+=(float v) { mmvalue = _mm_add_ps(mmvalue, _mm_set1_ps(v)); return *this; }
@@ -72,7 +72,9 @@ class Color
 };
 
 // Comparison operators ////////////////////////////////////////////////////////
-inline bool operator==(Color const& left, Color const& right) { return _mm_test_all_ones(_mm_cmpeq_epi32(left.mmvalue, right.mmvalue)); }
+inline bool operator==(Color const& left, Color const& right) {
+    return _mm_test_all_ones(_mm_cmpeq_epi32(_mm_set_ps(0, left.b, left.g, left.r), _mm_set_ps(0, right.b, right.g, right.r)));
+}
 inline bool operator!=(Color const& left, Color const& right) { return !(left == right); }
 
 // Arithmethic operators float with Color

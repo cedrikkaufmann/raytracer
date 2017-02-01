@@ -68,7 +68,9 @@ class Vector2d
 };
 
 // Comparison operators ////////////////////////////////////////////////////////
-inline bool operator==(Vector2d const& left, Vector2d const& right) { return _mm_test_all_ones(_mm_cmpeq_epi32(left.mmvalue, right.mmvalue)); }
+inline bool operator==(Vector2d const& left, Vector2d const& right) {
+    return _mm_test_all_ones(_mm_cmpeq_epi32(_mm_set_ps(0, 0, left.v, left.u), _mm_set_ps(0, 0, right.v, right.u)));
+}
 inline bool operator!=(Vector2d const& left, Vector2d const& right) { return !(left == right); }
 
 // Arithmethic operators float with Vector3d
@@ -80,9 +82,9 @@ inline Vector2d operator/(float a, const Vector2d& b) { return Vector2d(_mm_set1
 // Useful functions
 inline Vector2d componentProduct(Vector2d const& left, Vector2d const& right) { return _mm_mul_ps(left.mmvalue, right.mmvalue); }
 inline Vector2d componentQuotient(Vector2d const& left, Vector2d const& right) { return _mm_div_ps(left.mmvalue, right.mmvalue); }
-inline float dotProduct(Vector2d const& left, Vector2d const& right) { return _mm_cvtss_f32(_mm_dp_ps(left.mmvalue, right.mmvalue, 0x71)); }
-inline float length(Vector2d const& m) { return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(m.mmvalue, m.mmvalue, 0x71))); }
-inline Vector2d normalized(Vector2d const& m) { return _mm_mul_ps(m.mmvalue, _mm_rsqrt_ps(_mm_dp_ps(m.mmvalue, m.mmvalue, 0x7F))); }
+inline float dotProduct(Vector2d const& left, Vector2d const& right) { return _mm_cvtss_f32(_mm_dp_ps(left.mmvalue, right.mmvalue, 0x31)); }
+inline float length(Vector2d const& m) { return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(m.mmvalue, m.mmvalue, 0x31))); }
+inline Vector2d normalized(Vector2d const& m) { return _mm_mul_ps(m.mmvalue, _mm_rsqrt_ps(_mm_dp_ps(m.mmvalue, m.mmvalue, 0x33))); }
 inline void normalize(Vector2d * m) { *m = normalized(*m); }
 
 #endif

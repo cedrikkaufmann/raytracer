@@ -70,7 +70,10 @@ class Vector3d
 };
 
 // Comparison operators ////////////////////////////////////////////////////////
-inline bool operator==(Vector3d const& left, Vector3d const& right) { return _mm_test_all_ones(_mm_cmpeq_epi32(left.mmvalue, right.mmvalue)); }
+inline bool operator==(Vector3d const& left, Vector3d const& right) {
+    return _mm_test_all_ones(_mm_cmpeq_epi32(left.mmvalue, right.mmvalue));
+    //return _mm_test_all_ones(_mm_cmpeq_epi32(_mm_set_ps(0, left.z, left.y, left.x), _mm_set_ps(0, right.z, right.y, right.x)));
+}
 inline bool operator!=(Vector3d const& left, Vector3d const& right) { return !(left == right); }
 
 // Arithmethic operators float with Vector3d
@@ -90,7 +93,7 @@ inline Vector3d crossProduct(Vector3d const& left, Vector3d const& right) {
 }
 inline float dotProduct(Vector3d const& left, Vector3d const& right) { return _mm_cvtss_f32(_mm_dp_ps(left.mmvalue, right.mmvalue, 0x71)); }
 inline float length(Vector3d const& v) { return _mm_cvtss_f32(_mm_sqrt_ss(_mm_dp_ps(v.mmvalue, v.mmvalue, 0x71))); }
-inline Vector3d normalized(Vector3d const& v) { return _mm_mul_ps(v.mmvalue, _mm_rsqrt_ps(_mm_dp_ps(v.mmvalue, v.mmvalue, 0x7F))); }
+inline Vector3d normalized(Vector3d const& v) { return _mm_mul_ps(v.mmvalue, _mm_rsqrt_ps(_mm_dp_ps(v.mmvalue, v.mmvalue, 0x77))); }
 inline void normalize(Vector3d * v) { *v = normalized(*v); }
 inline Vector3d minimum(Vector3d const& left, Vector3d const& right) { return _mm_min_ps(left.mmvalue, right.mmvalue); }
 inline Vector3d maximum(Vector3d const& left, Vector3d const& right) { return _mm_max_ps(left.mmvalue, right.mmvalue); }
