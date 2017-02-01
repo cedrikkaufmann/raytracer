@@ -29,16 +29,6 @@
 int main() {
   std::cout << "RayTracing Engine - OpenMP SSE Version" << std::endl << "Threads beeing used: " << omp_get_max_threads() << std::endl << std::endl;
 
-  Vector3d a(1,32,4);
-  Vector3d b = a;
-
-  a += 5;
-  b = b + Vector3d(5,5,5);
-
-  if (a == b) {
-      std::cout << "a equals b" << std::endl;
-  }
-
   // Set up the scene
   SimpleScene scene;
   scene.setEnvironmentMap(Texture("data/sky_stars_night_bg.jpg"));
