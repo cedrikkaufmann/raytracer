@@ -71,8 +71,7 @@ class Vector3d
 
 // Comparison operators ////////////////////////////////////////////////////////
 inline bool operator==(Vector3d const& left, Vector3d const& right) {
-    return _mm_test_all_ones(_mm_cmpeq_epi32(left.mmvalue, right.mmvalue));
-    //return _mm_test_all_ones(_mm_cmpeq_epi32(_mm_set_ps(0, left.z, left.y, left.x), _mm_set_ps(0, right.z, right.y, right.x)));
+    return _mm_test_all_ones(_mm_cmpeq_epi32(_mm_set_ps(0, left.z, left.y, left.x), _mm_set_ps(0, right.z, right.y, right.x)));
 }
 inline bool operator!=(Vector3d const& left, Vector3d const& right) { return !(left == right); }
 
