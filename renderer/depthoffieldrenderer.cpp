@@ -11,7 +11,7 @@
 
 
 Vector3d unitCircleRandom(float radius) {
-    Vector2d randomVec(
+  Vector2d randomVec(
     2*PI*((float)rand() / RAND_MAX),
     std::sqrt((float)rand() / RAND_MAX)
   );
@@ -20,6 +20,11 @@ Vector3d unitCircleRandom(float radius) {
   Vector2d unitCirclePos = ( (radius * randomVec.v) * circleVec );
 
   return Vector3d(unitCirclePos.u, unitCirclePos.v, 0);
+}
+
+Vector3d pixelRandom() {
+   Vector3d randomVec(rand()/RAND_MAX, rand()/RAND_MAX, 0);
+   return randomVec;
 }
 
 Texture DepthOfFieldRenderer::renderImage(Scene const& scene,
@@ -54,13 +59,14 @@ Texture DepthOfFieldRenderer::renderImage(Scene const& scene,
       // Aperture color buffer
       Color apertureColor;
 
-      for (unsigned i = 0; i < this->apertureRays_; i++) {
+      for (int i = 0; i < this->apertureRays_; i++) {
         // prepare ray using jittered random origin simulating the aperture
         Ray apertureRay = ray;
         apertureRay.origin += unitCircleRandom(this->apertureRadius_);
+        Vector3d pixelJitter = focalPoint + pixelRandom();
 
         // calculate new direction based on focal point and jittered origin
-        apertureRay.direction = normalized(focalPoint - apertureRay.origin);
+        apertureRay.direction = normalized(pixelJitter - apertureRay.origin);
 
         // trace the aperture ray and add color to color buffer
         apertureColor += scene.traceRay(&apertureRay);
