@@ -36,8 +36,8 @@ Texture SuperRenderer::renderImage(Scene const& scene,
       for (int xs = 0; xs < this->superSamplingFactor_; ++xs) {
 
         for (int ys = 0; ys < this->superSamplingFactor_; ++ys) {
-          Ray ray = camera.castRay(((xs*samplingStep + x)/width*2-1),
-                                   ((ys*samplingStep + y)/height*2-1)*aspectRatio);
+          Ray ray = camera.castRay(((xs* (samplingStep + rand()/RAND_MAX / this->superSamplingFactor_ ) + x)/width*2-1),
+                                   ((ys* (samplingStep + rand()/RAND_MAX / this->superSamplingFactor_ ) + y)/height*2-1)*aspectRatio);
           fragmentColor += scene.traceRay(&ray);
         }
       }

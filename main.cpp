@@ -26,6 +26,8 @@
 #include <iostream>
 #include <omp.h>
 
+#include <renderer/superrenderer.h>
+
 int main() {
   std::cout << "RayTracing Engine - OpenMP SSE Version" << std::endl << "Threads beeing used: " << omp_get_max_threads() << std::endl << std::endl;
 
@@ -111,10 +113,12 @@ int main() {
 
 
   // Set up the renderer...
-  DepthOfFieldRenderer renderer;
+  SuperRenderer renderer;
+  renderer.setSuperSamplingFactor(4);
+  /*DepthOfFieldRenderer renderer;
   renderer.setApertureRadius(1.2f);
   renderer.setApertureRays(100);
-  renderer.setFocalDistance(100);
+  renderer.setFocalDistance(100);*/
 
   // ... and render an image
   renderer.renderImage(scene, camera, 1000, 1000).save("result.png");
